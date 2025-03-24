@@ -59,14 +59,7 @@
             display: flex;
             justify-content: space-between;
         }
-        #productList div button {
-            background-color: #e6b800;
-            color: black;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
+        #productList div button{ background-color: #e6b800; color: black; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; transition: background-color 0.3s; font-size: 16px; }
     </style>
 </head>
 <body>
@@ -1818,7 +1811,12 @@
         }
 
         function printOrder() {
-            window.print();
+            const printContent = cart.map(item => `${item.name} - الكمية: ${item.quantity} - السعر الإجمالي: ${item.price * item.quantity}₪`).join('
+');
+            const printWindow = window.open('', '', 'height=600,width=800');
+            printWindow.document.write('<html><head><title>طباعة الطلب</title></head><body><pre>' + printContent + '</pre></body></html>');
+            printWindow.document.close();
+            printWindow.print();
         }
 
         searchProducts();
