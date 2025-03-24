@@ -1,50 +1,549 @@
-
 <!DOCTYPE html>
 <html lang="ar">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width:device-width, initial-scale=1.0">
     <title>📦 إدخال الطلبات</title>
-    <link rel="manifest" href="manifest.json">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600&display=swap" rel="stylesheet">
-    <script>
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('service-worker.js')
-            .then(registration => {
-                console.log('Service Worker registered with scope:', registration.scope);
-            }).catch(error => {
-                console.error('Service Worker registration failed:', error);
-            });
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #f0f4c3;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
         }
-    </script>
+        h2 {
+            color: #00897b;
+            margin-top: 20px;
+        }
+        #productListContainer {
+            margin-bottom: 20px;
+            width: 90%;
+            max-width: 600px;
+        }
+        #searchInput {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+            font-family: 'Cairo', sans-serif;
+        }
+        #searchInput:focus {
+            outline: none;
+            border-color: #00897b;
+            box-shadow: 0 0 5px rgba(0, 137, 123, 0.3);
+        }
+        #productList {
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        #productList div {
+            padding: 12px;
+            cursor: pointer;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 16px;
+        }
+        #productList div:hover {
+            background-color: #f5f5f5;
+        }
+        #productList div span {
+            color: #888;
+        }
+        #productList div button {
+            background-color: #00897b;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
+            font-family: 'Cairo', sans-serif;
+        }
+        #productList div button:hover {
+            background-color: #00695c;
+        }
+        #orderTable {
+            width: 90%;
+            max-width: 600px;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-top: 0;
+        }
+        #orderTable th, #orderTable td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+            font-size: 16px;
+        }
+        #orderTable th {
+            background-color: #c5e1a5;
+            color: #000;
+        }
+        #orderTable input[type="number"] {
+            width: 80px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            text-align: center;
+            box-sizing: border-box;
+            font-family: 'Cairo', sans-serif;
+        }
+        #orderTable input[type="number"]:focus {
+            outline: none;
+            border-color: #00897b;
+            box-shadow: 0 0 5px rgba(0, 137, 123, 0.3);
+        }
+        #orderTable button {
+            background-color: #ef5350;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
+            font-family: 'Cairo', sans-serif;
+        }
+        #orderTable button:hover {
+            background-color: #c62828;
+        }
+        .buttonContainer {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+            width: 90%;
+            max-width: 600px;
+            align-items: stretch;
+        }
+        .buttonContainer button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background-color 0.3s ease;
+            font-family: 'Cairo', sans-serif;
+        }
+        .buttonContainer button:first-child {
+            background-color: #00897b;
+            color: white;
+        }
+        .buttonContainer button:first-child:hover {
+            background-color: #00695c;
+        }
+        .buttonContainer button:nth-child(2) {
+            background-color: #43a047;
+            color: white;
+        }
+        .buttonContainer button:nth-child(2):hover {
+            background-color: #2e7d32;
+        }
+        .buttonContainer button:last-child {
+            background-color: #311b92;
+            color: white;
+        }
+        .buttonContainer button:last-child:hover {
+            background-color: #1a237e;
+        }
+        #adminPanel {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            width: 90%;
+            max-width: 600px;
+            box-sizing: border-box;
+            display: none;
+        }
+        #adminPanel h3 {
+            color: #00897b;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        #adminPanel input[type="text"],
+        #adminPanel input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+            font-family: 'Cairo', sans-serif;
+        }
+        #adminPanel input[type="text"]:focus,
+        #adminPanel input[type="number"]:focus {
+            outline: none;
+            border-color: #00897b;
+            box-shadow: 0 0 5px rgba(0, 137, 123, 0.3);
+        }
+        #adminPanel button {
+            background-color: #00897b;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+            width: 100%;
+            font-family: 'Cairo', sans-serif;
+        }
+        #adminPanel button:hover {
+            background-color: #00695c;
+        }
+        #adminCodeContainer {
+            margin-bottom: 20px;
+            width: 90%;
+            max-width: 600px;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+        }
+        #adminCodeContainer label {
+            margin-bottom: 5px;
+            font-size: 16px;
+            color: #555;
+            font-family: 'Cairo', sans-serif;
+        }
+        #adminCodeContainer input[type="password"] {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+            font-family: 'Cairo', sans-serif;
+        }
+        #adminCodeContainer input[type="password"]:focus {
+            outline: none;
+            border-color: #00897b;
+            box-shadow: 0 0 5px rgba(0, 137, 123, 0.3);
+        }
+        #adminCodeContainer button {
+            background-color: #00897b;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+            font-family: 'Cairo', sans-serif;
+        }
+        #adminCodeContainer button:hover {
+            background-color: #00695c;
+        }
+        @media (max-width: 640px) {
+            #productListContainer,
+            #orderTable,
+            .buttonContainer,
+            #adminPanel,
+            #adminCodeContainer {
+                width: 95%;
+            }
+            .buttonContainer button {
+                font-size: 16px;
+                padding: 10px 18px;
+            }
+            #orderTable th, #orderTable td{
+                font-size: 14px;
+                padding: 10px;
+            }
+        }
+    </style>
 </head>
 <body>
     <h2>📦 إدخال الطلبات</h2>
-    <div>
-        <select id="categoryFilter" onchange="searchProducts()">
-            <option value="">كل الفئات</option>
-        </select>
-        <input type="text" id="searchInput" placeholder="🔍 البحث عن منتج..." onkeyup="searchProducts()">
+    <div id="adminCodeContainer">
+        <label for="adminCode">ادخل رمز لوحة التحكم:</label>
+        <input type="password" id="adminCode" placeholder="الرمز">
+        <button onclick="verifyCode()">دخول</button>
+    </div>
+    <div id="productListContainer">
+        <input type="text" id="searchInput" onkeyup="searchDropdown()" placeholder="🔍 البحث عن منتج...">
         <div id="productList"></div>
     </div>
-
-    <div>
-        <h3>🛒 عربة التسوق</h3>
-        <div id="cartItems"></div>
-        <p id="totalWithTax">السعر بعد الضريبة: 0₪</p>
-        <button onclick="sendOrder()">📲 إرسال الطلب عبر واتساب</button>
+    <table id="orderTable">
+        <thead>
+            <tr>
+                <th>📦 المنتج</th>
+                <th>📊 العدد</th>
+                <th>🗑️ حذف</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+    <div class="buttonContainer">
+        <button onclick="sendOrder()">📩 إرسال الطلب عبر واتساب</button>
+        <button onclick="clearOrder()">🗑️ تفريغ الطلب</button>
         <button onclick="printOrder()">🖨️ طباعة الطلب</button>
+    </div>
+    <div id="adminPanel" style="display: none;">
+        <h3>لوحة تحكم المسؤول</h3>
+        <input type="text" id="newProductName" placeholder="اسم المنتج">
+        <input type="number" id="newProductPrice" placeholder="السعر">
+        <button onclick="addProduct()">إضافة منتج</button>
     </div>
 
     <script>
-        const products = [
-            { name: "عطر نسائي A.104", price: 47, category: "عطور نسائية" },
-            { name: "عطر رجالي A.102", price: 47, category: "عطور رجالية" },
-            { name: "عطر يونيسكس Q.101", price: 47, category: "عطور يونيسكس" },
-            { name: "عطر نسائي B.205", price: 55, category: "عطور نسائية" },
-            { name: "عطر رجالي M.301", price: 65, category: "عطور رجالية" },
-            { name: "عطر يونيسكس U.401", price: 60, category: "عطور يونيسكس" }
+        const adminPassword = "5050";
+        let products = [
+            { name: "ن A.104", price: 25 },
+            { name: "ن A.112", price: 30 },
+            { name: "ن A.113", price: 20 },
+            { name: "ن B.103", price: 15 },
+            { name: "ن B.104", price: 40 },
+            { name: "ر A.102", price: 18 },
+            { name: "ر A.104", price: 22 }
         ];
+        let orderItems = [];
+        const taxRate = 0.18;
+        let editingProduct = null;
+
+        function verifyCode() {
+            const code = document.getElementById("adminCode").value;
+            if (code === adminPassword) {
+                document.getElementById("adminPanel").style.display = "block";
+                alert("تم الدخول بنجاح!");
+                searchDropdown();
+            } else {
+                alert("رمز غير صحيح!");
+            }
+        }
+
+        function searchDropdown() {
+            const searchInput = document.getElementById("searchInput").value.toLowerCase();
+            const productList = document.getElementById("productList");
+            productList.innerHTML = "";
+
+            products.forEach(product => {
+                if (product.name.toLowerCase().includes(searchInput)) {
+                    const div = document.createElement('div');
+                    div.innerHTML = `
+                        <span>${product.name}</span>
+                        <button onclick='addToOrder("${product.name}", ${product.price})'>إضافة</button>
+                        <button onclick='editProduct("${product.name}")'>تعديل</button>
+                    `;
+                    productList.appendChild(div);
+                }
+            });
+        }
+
+        function addToOrder(name, price) {
+            const existingItem = orderItems.find(item => item.name === name);
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                orderItems.push({ name: name, price: price, quantity: 1 });
+            }
+            updateOrderTable();
+            searchDropdown();
+        }
+
+        function updateOrderTable() {
+            const tableBody = document.querySelector("#orderTable tbody");
+            tableBody.innerHTML = "";
+
+            orderItems.forEach((item, index) => {
+                const row = tableBody.insertRow();
+                const nameCell = row.insertCell(0);
+                const quantityCell = row.insertCell(1);
+                const priceCell = row.insertCell(2);
+                const deleteCell = row.insertCell(2);
+
+                nameCell.textContent = item.name;
+                quantityCell.innerHTML = `<input type="number" value="${item.quantity}" min="1" onchange="updateQuantity(${index}, this.value)">`;
+                priceCell.textContent = "";
+                deleteCell.innerHTML = `<button onclick="deleteOrderItem(${index})">🗑️</button>`;
+            });
+        }
+
+        function updateQuantity(index, quantity) {
+            quantity = parseInt(quantity);
+            if (quantity > 0) {
+                orderItems[index].quantity = quantity;
+            } else {
+                orderItems[index].quantity = 1;
+            }
+            updateOrderTable();
+        }
+
+        function deleteOrderItem(index) {
+            orderItems.splice(index, 1);
+            updateOrderTable();
+        }
+
+        function sendOrder() {
+            if (orderItems.length === 0) {
+                alert("الرجاء إضافة منتجات إلى الطلب!");
+                return;
+            }
+
+            let message = "قائمة الطلبات:\n";
+            let totalPrice = 0;
+
+            orderItems.forEach(item => {
+                if (document.getElementById("adminPanel").style.display === "block") {
+                  const itemPrice = (item.price * item.quantity).toFixed(2);
+                   message += `- ${item.name}، العدد: ${item.quantity} السعر: ${itemPrice}\n`;
+                   totalPrice += parseFloat(itemPrice);
+
+                } else {
+                message += `- ${item.name}، العدد: ${item.quantity}\n`;
+                }
+            });
+
+            if (document.getElementById("adminPanel").style.display === "block"){
+              const taxAmount = (totalPrice * taxRate).toFixed(2);
+              const finalPrice = (totalPrice + parseFloat(taxAmount)).toFixed(2);
+
+              message += `\nالضريبة (18%): ${taxAmount}₪`;
+              message += `\nالسعر الإجمالي: ${finalPrice}₪`;
+            }
+
+            const encodedMessage = encodeURIComponent(message);
+            const whatsappUrl = `https://wa.me/?text=${encodedMessage}`;
+            window.open(whatsappUrl, '_blank');
+        }
+
+        function addProduct() {
+            const newProductName = document.getElementById("newProductName").value;
+            const newProductPrice = parseFloat(document.getElementById("newProductPrice").value);
+
+            if (newProductName && !isNaN(newProductPrice) && newProductPrice > 0) {
+                if (editingProduct) {
+                    const index = products.findIndex(p => p.name === editingProduct);
+                    if (index !== -1) {
+                        products[index].name = newProductName;
+                        products[index].price = newProductPrice;
+                    }
+                    editingProduct = null;
+                    alert("تم تعديل المنتج بنجاح!");
+                } else {
+                    products.push({ name: newProductName, price: newProductPrice });
+                    alert("تم إضافة المنتج بنجاح!");
+                }
+                searchDropdown();
+                document.getElementById("newProductName").value = "";
+                document.getElementById("newProductPrice").value = "";
+            } else {
+                alert("الرجاء إدخال اسم صحيح وسعر أكبر من صفر!");
+            }
+        }
+
+        function clearOrder() {
+            orderItems = [];
+            updateOrderTable();
+            alert("تم تفريغ الطلب!");
+        }
+
+        function printOrder() {
+            if (orderItems.length === 0) {
+                alert("الرجاء إضافة منتجات إلى الطلب!");
+                return;
+            }
+
+            let printContent = `
+                <div style="font-family: 'Cairo', sans-serif; text-align: center; padding: 20px;">
+                    <h2 style="color: #00897b; margin-bottom: 10px;">📦 طلب المنتجات</h2>
+                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; margin: auto;">
+                        <thead style="background-color: #c5e1a5;">
+                            <tr>
+                                <th style="border: 1px solid #ddd; padding: 12px; text-align: center; font-size: 18px;">المنتج</th>
+                                <th style="border: 1px solid #ddd; padding: 12px; text-align: center; font-size: 18px;">العدد</th>
+                                ${document.getElementById("adminPanel").style.display === "block" ? `<th style="border: 1px solid #ddd; padding: 12px; text-align: center; font-size: 18px;">السعر</th>` : ``}
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+
+            let totalPrice = 0;
+            orderItems.forEach(item => {
+                const itemPrice = (item.price * item.quantity).toFixed(2);
+                printContent += `
+                                    <tr>
+                                        <td style="border: 1px solid #ddd; padding: 12px; text-align: center; font-size: 16px;">${item.name}</td>
+                                        <td style="border: 1px solid #ddd; padding: 12px; text-align: center; font-size: 16px;">${item.quantity}</td>
+                                        ${document.getElementById("adminPanel").style.display === "block" ? `<td style="border: 1px solid #ddd; padding: 12px; text-align: center; font-size: 16px;">${itemPrice}</td>` : ``}
+                                    </tr>
+                `;
+                totalPrice += parseFloat(itemPrice);
+            });
+
+            if (document.getElementById("adminPanel").style.display === "block") {
+              const taxAmount = (totalPrice * taxRate).toFixed(2);
+              const finalPrice = (totalPrice + parseFloat(taxAmount)).toFixed(2);
+                printContent += `
+                        </tbody>
+                        <tfoot style="background-color: #f0f4c3;">
+                            <tr>
+                                <td colspan="${document.getElementById("adminPanel").style.display === "block" ? `3` : `2`}" style="border: 1px solid #ddd; padding: 12px; text-align: center; font-size: 18px; font-weight: bold;">السعر الإجمالي:</td>
+                                <td style="border: 1px solid #ddd; padding: 12px; text-align: center; font-size: 18px; font-weight: bold;">${finalPrice}₪</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                    <p style="font-size: 16px;">شكراً لطلبكم!</p>
+                </div>
+                `;
+                } else {
+                     printContent += `
+                        </tbody>
+                    </table>
+                    <p style="font-size: 16px;">شكراً لطلبكم!</p>
+                </div>
+                `;
+                }
+
+            const printWindow = window.open('', '', 'height=400,width=800');
+            printWindow.document.write('<html><head><title>طباعة الطلب</title>');
+            printWindow.document.write('<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600&display=swap" rel="stylesheet">');
+            printWindow.document.write('<style>');
+            printWindow.document.write('body { font-family: "Cairo", sans-serif; text-align: right; }');
+            printWindow.document.write('table { width: 100%; border-collapse: collapse; margin-bottom: 20px; margin: auto; }');
+            printWindow.document.write('th, td { border: 1px solid #ddd; padding: 12px; text-align: center; }');
+            printWindow.document.write('th { background-color: #c5e1a5; color: #000; }');
+            printWindow.document.write('</style>');
+            printWindow.document.write('</head><body>');
+            printWindow.document.write(printContent);
+            printWindow.document.write('</body></html>');
+            printWindow.document.close();
+            printWindow.focus();
+            printWindow.print();
+            printWindow.close();
+        }
+
+        function editProduct(name) {
+            editingProduct = name;
+            const productToEdit = products.find(p => p.name === name);
+            if (productToEdit) {
+                document.getElementById("newProductName").value = productToEdit.name;
+                document.getElementById("newProductPrice").value = productToEdit.price;
+                document.getElementById("adminPanel").style.display = "block";
+            }
+        }
+        searchDropdown();
     </script>
 </body>
 </html>
