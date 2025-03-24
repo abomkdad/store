@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📦 إدخال الطلبات</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#e6b800">
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/service-worker.js')
+            .then(registration => {
+                console.log('Service Worker registered with scope:', registration.scope);
+            }).catch(error => {
+                console.log('Service Worker registration failed:', error);
+            });
+        }
+    </script>
+</head>
+<body>
+    <h2>📦 إدخال الطلبات</h2>
+    <div id="productListContainer">
+        <select id="categoryFilter" onchange="searchProducts()">
+            <option value="">كل الفئات</option>
+        </select>
+        <input type="text" id="searchInput" placeholder="🔍 البحث عن منتج..." onkeyup="searchProducts()">
+        <div id="productList"></div>
+    </div>
+    <div id="cart">
+        <h3>🛒 عربة التسوق</h3>
+        <div id="cartItems"></div>
+        <div>
+            <p id="totalWithoutTax">السعر قبل الضريبة: 0₪</p>
+            <p id="totalWithTax">السعر بعد الضريبة: 0₪</p>
+        </div>
+        <button onclick="sendOrder()">📲 إرسال الطلب عبر واتساب</button>
+        <button onclick="printOrder()">🖨️ طباعة الطلب</button>
+    </div>
+</body>
+</html>
