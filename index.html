@@ -82,19 +82,1677 @@
     <div id="cart">
         <h3>🛒 عربة التسوق</h3>
         <div id="cartItems"></div>
+        <p id="totalWithTax">السعر بعد الضريبة: 0₪</p>
+        <button onclick="sendOrder()">📲 إرسال الطلب عبر واتساب</button>
+        <button onclick="printOrder()">🖨️ طباعة الطلب</button>
     </div>
 
     <script>
         const products = [
-            { name: "XF A.104", price: 47, category: "نسائي" },
-            { name: "XM A.102", price: 47, category: "رجالي" },
-            { name: "XU Q.101", price: 47, category: "يونيسكس" },
-            { name: "XN B.205", price: 55, category: "نسائي" },
-            { name: "XR M.301", price: 65, category: "رجالي" },
-            { name: "XC U.401", price: 60, category: "يونيسكس" }
-        ];
+    {
+        "name":"XF A.104",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF A.112",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF A.113",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF A.114",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF A.117",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF A.118",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF A.120",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF A.122",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF B.103",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF B.104",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF B.105",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF B.106",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF B.107",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF C.119",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF C.120",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF C.121",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF C.123",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF C.126",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF D.114",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF D.115",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF D.116",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF D.117",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF D.119",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF D.121",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF E.104",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF E.117",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF G.101",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF G.103",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF G.104",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF G.106",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF G.107",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF H.102",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF H.103",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF H.104",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF H.105",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF J.101",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF J.102",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF J.103",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF J.106",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF K.101",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF K.103",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF L.101",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF L.102",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF L.103",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF L.112",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF L.113",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF N.101",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF N.105",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF N.106",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF P.101",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF P.104",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF P.105",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF P.107",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF R.105",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF R.109",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF R.110",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF V.101",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF V.102",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF V.103",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF V.105",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF V.106",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF V.109",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF V.110",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF V.112",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF W.113",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF W.125",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF W.132",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF W.144",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF W.150",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF W.152",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF W.153",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF W.154",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF W.155",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF W.160",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF W.162",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF W.164",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF W.165",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF W.174",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF W.175",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF W.183",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF W.184",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF W.185",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF W.201",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF W.203",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF W.204",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF W.208",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF W.209",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF W.212",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF W.213",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF W.214",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF W.217",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF W.222",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF Y.101",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF Y.102",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XF Z.101",
+        "price":47,
+        "category":"نسائي"
+    },
+    {
+        "name":"XM A.102",
+        "price":47,
+        "category":"رجالي"
+    },
+    {
+        "name":"XM A.104",
+        "price":47,
+        "category":"رجالي"
+    },
+    {
+        "name":"XM A.113",
+        "price":47,
+        "category":"رجالي"
+    },
+    {
+        "name":"XM A.114",
+        "price":47,
+        "category":"رجالي"
+    },
+    {
+        "name":"XM A.115",
+        "price":47,
+        "category":"رجالي"
+    },
+    {
+        "name":"XM B.102",
+        "price":47,
+        "category":"رجالي"
+    },
+    {
+        "name":"XM B.103",
+        "price":47,
+        "category":"رجالي"
+    },
+    {
+        "name":"XM B.104",
+        "price":47,
+        "category":"رجالي"
+    },
+    {
+        "name":"XM B.106",
+        "price":47,
+        "category":"رجالي"
+    },
+    {
+        "name":"XM B.107",
+        "price":47,
+        "category":"رجالي"
+    },
+    {
+        "name":"XM B.108",
+        "price":47,
+        "category":"رجالي"
+    },
+    {
+        "name":"XM C.101",
+        "price":47,
+        "category":"رجالي"
+    },
+    {
+        "name":"XM C.108",
+        "price":47,
+        "category":"رجالي"
+    },
+    {
+        "name":"XM C.109",
+        "price":47,
+        "category":"رجالي"
+    },
+    {
+        "name":"XM C.114",
+        "price":47,
+        "category":"رجالي"
+    },
+    {
+        "name":"XM D.102",
+        "price":47,
+        "category":"رجالي"
+    },
+    {
+        "name":"XM D.110",
+        "price":47,
+        "category":"رجالي"
+    },
+    {
+        "name":"XM F.101",
+        "price":47,
+        "category":"رجالي"
+    },
+    {
+        "name":"XM G.101",
+        "price":47,
+        "category":"رجالي"
+    },
+    {
+        "name":"XM H.101",
+        "price":47,
+        "category":"رجالي"
+    },
+    {
+        "name":"XM I.101",
+        "price":47,
+        "category":"رجالي"
+    },
+    {
+        "name":"XM I.103",
+        "price":47,
+        "category":"رجالي"
+    },
+    {
+        "name":"XM I.104",
+        "price":47,
+        "category":"رجالي"
+    },
+    {
+        "name":"XM J.101",
+        "price":47,
+        "category":"رجالي"
+    },
+    {
+        "name":"XM J.102",
+        "price":47,
+        "category":"رجالي"
+    },
+    {
+        "name":"XM J.104",
+        "price":47,
+        "category":"رجالي"
+    },
+    {
+        "name":"XM J.107",
+        "price":47,
+        "category":"رجالي"
+    },
+    {
+        "name":"XM K.101",
+        "price":47,
+        "category":"رجالي"
+    },
+    {
+        "name":"XM L.105",
+        "price":47,
+        "category":"رجالي"
+    },
+    {
+        "name":"XM L.106",
+        "price":47,
+        "category":"رجالي"
+    },
+    {
+        "name":"XM P.101",
+        "price":47,
+        "category":"رجالي"
+    },
+    {
+        "name":"XM P.102",
+        "price":47,
+        "category":"رجالي"
+    },
+    {
+        "name":"XM P.103",
+        "price":47,
+        "category":"رجالي"
+    },
+    {
+        "name":"XM P.109",
+        "price":47,
+        "category":"رجالي"
+    },
+    {
+        "name":"XM R.103",
+        "price":47,
+        "category":"رجالي"
+    },
+    {
+        "name":"XM W.120",
+        "price":47,
+        "category":"رجالي"
+    },
+    {
+        "name":"XM W.122",
+        "price":47,
+        "category":"رجالي"
+    },
+    {
+        "name":"XM W.126",
+        "price":47,
+        "category":"رجالي"
+    },
+    {
+        "name":"XM W.128",
+        "price":47,
+        "category":"رجالي"
+    },
+    {
+        "name":"XM W.129",
+        "price":47,
+        "category":"رجالي"
+    },
+    {
+        "name":"XM W.133",
+        "price":47,
+        "category":"رجالي"
+    },
+    {
+        "name":"XM W.139",
+        "price":47,
+        "category":"رجالي"
+    },
+    {
+        "name":"XM W.142",
+        "price":47,
+        "category":"رجالي"
+    },
+    {
+        "name":"XM W.143",
+        "price":47,
+        "category":"رجالي"
+    },
+    {
+        "name":"XM W.150",
+        "price":47,
+        "category":"رجالي"
+    },
+    {
+        "name":"XM W.158",
+        "price":47,
+        "category":"رجالي"
+    },
+    {
+        "name":"XM W.160",
+        "price":47,
+        "category":"رجالي"
+    },
+    {
+        "name":"XM W.161",
+        "price":47,
+        "category":"رجالي"
+    },
+    {
+        "name":"XM W.163",
+        "price":47,
+        "category":"رجالي"
+    },
+    {
+        "name":"XM W.164",
+        "price":47,
+        "category":"رجالي"
+    },
+    {
+        "name":"XM W.171",
+        "price":47,
+        "category":"رجالي"
+    },
+    {
+        "name":"XM W.174",
+        "price":47,
+        "category":"رجالي"
+    },
+    {
+        "name":"XM W.180",
+        "price":47,
+        "category":"رجالي"
+    },
+    {
+        "name":"XM W.183",
+        "price":47,
+        "category":"رجالي"
+    },
+    {
+        "name":"XM W.184",
+        "price":47,
+        "category":"رجالي"
+    },
+    {
+        "name":"XM W.189",
+        "price":47,
+        "category":"رجالي"
+    },
+    {
+        "name":"XM W.191",
+        "price":47,
+        "category":"رجالي"
+    },
+    {
+        "name":"XM W.192",
+        "price":47,
+        "category":"رجالي"
+    },
+    {
+        "name":"XM Y.102",
+        "price":47,
+        "category":"رجالي"
+    },
+    {
+        "name":"XU Q.101",
+        "price":47,
+        "category":"يونيسكس"
+    },
+    {
+        "name":"XU Q.102",
+        "price":47,
+        "category":"يونيسكس"
+    },
+    {
+        "name":"XU Q.103",
+        "price":47,
+        "category":"يونيسكس"
+    },
+    {
+        "name":"XU Q.104",
+        "price":47,
+        "category":"يونيسكس"
+    },
+    {
+        "name":"XU Q.105",
+        "price":47,
+        "category":"يونيسكس"
+    },
+    {
+        "name":"XU Q.106",
+        "price":47,
+        "category":"يونيسكس"
+    },
+    {
+        "name":"XU Q.107",
+        "price":47,
+        "category":"يونيسكس"
+    },
+    {
+        "name":"XU Q.108",
+        "price":47,
+        "category":"يونيسكس"
+    },
+    {
+        "name":"XU Q.109",
+        "price":47,
+        "category":"يونيسكس"
+    },
+    {
+        "name":"XU Q.110",
+        "price":47,
+        "category":"يونيسكس"
+    },
+    {
+        "name":"XU Q.111",
+        "price":47,
+        "category":"يونيسكس"
+    },
+    {
+        "name":"AP.8.GOOD NIGHT KISS",
+        "price":6,
+        "category":"سيارات"
+    },
+    {
+        "name":"AP.8.HIPNOTIZYA",
+        "price":6,
+        "category":"سيارات"
+    },
+    {
+        "name":"AP.8.KARPUZ ÇİLEK",
+        "price":6,
+        "category":"سيارات"
+    },
+    {
+        "name":"AP.8.KAVUN",
+        "price":6,
+        "category":"سيارات"
+    },
+    {
+        "name":"AP.8.LIMPIO",
+        "price":6,
+        "category":"سيارات"
+    },
+    {
+        "name":"AP.8.MONA ROSA",
+        "price":6,
+        "category":"سيارات"
+    },
+    {
+        "name":"AP.8.PATCH",
+        "price":6,
+        "category":"سيارات"
+    },
+    {
+        "name":"AP.8.REBORN",
+        "price":6,
+        "category":"سيارات"
+    },
+    {
+        "name":"AP.8.YEŞİL ELMA",
+        "price":6,
+        "category":"سيارات"
+    },
+    {
+        "name":"BRUNO GOLD INTENSE",
+        "price":137,
+        "category":"نيش"
+    },
+    {
+        "name":"BY BRUNO CASANOVA",
+        "price":120,
+        "category":"نيش"
+    },
+    {
+        "name":"BY BRUNO DETOX",
+        "price":120,
+        "category":"نيش"
+    },
+    {
+        "name":"BY BRUNO EXOTIC",
+        "price":120,
+        "category":"نيش"
+    },
+    {
+        "name":"BY BRUNO GOLD",
+        "price":132,
+        "category":"نيش"
+    },
+    {
+        "name":"DESERTO",
+        "price":131,
+        "category":"نيش"
+    },
+    {
+        "name":"DIVINE DESIRE",
+        "price":120,
+        "category":"نيش"
+    },
+    {
+        "name":"DIVINE TOUGH",
+        "price":120,
+        "category":"نيش"
+    },
+    {
+        "name":"EFFECT",
+        "price":128,
+        "category":"نيش"
+    },
+    {
+        "name":"EGO",
+        "price":132,
+        "category":"نيش"
+    },
+    {
+        "name":"FORZA",
+        "price":131,
+        "category":"نيش"
+    },
+    {
+        "name":"GRANDE NOTTE",
+        "price":131,
+        "category":"نيش"
+    },
+    {
+        "name":"GUMIN",
+        "price":132,
+        "category":"نيش"
+    },
+    {
+        "name":"INSPIRATION",
+        "price":120,
+        "category":"نيش"
+    },
+    {
+        "name":"INVITING",
+        "price":120,
+        "category":"نيش"
+    },
+    {
+        "name":"MAD ABSOLUTELY",
+        "price":120,
+        "category":"نيش"
+    },
+    {
+        "name":"MAD DEVILS TRICK",
+        "price":128,
+        "category":"نيش"
+    },
+    {
+        "name":"MAD GOLDEN AGE",
+        "price":131,
+        "category":"نيش"
+    },
+    {
+        "name":"MAD GOLDEN FEEL",
+        "price":131,
+        "category":"نيش"
+    },
+    {
+        "name":"MAD GOLDEN GLORY",
+        "price":131,
+        "category":"نيش"
+    },
+    {
+        "name":"MAD GOLDEN SOUL",
+        "price":131,
+        "category":"نيش"
+    },
+    {
+        "name":"MAD NARCOTIC",
+        "price":140,
+        "category":"نيش"
+    },
+    {
+        "name":"MAD NARCOTIC INTENSE",
+        "price":137,
+        "category":"نيش"
+    },
+    {
+        "name":"MAD NEW YORK NIGHT",
+        "price":160,
+        "category":"نيش"
+    },
+    {
+        "name":"MAD OUD SUPREME",
+        "price":157,
+        "category":"نيش"
+    },
+    {
+        "name":"Mad Rouge",
+        "price":140,
+        "category":"نيش"
+    },
+    {
+        "name":"MAD SAPPHIRE",
+        "price":157,
+        "category":"نيش"
+    },
+    {
+        "name":"MADAM AMOUR",
+        "price":131,
+        "category":"نيش"
+    },
+    {
+        "name":"MADAM THE ROMAN NIGHT",
+        "price":131,
+        "category":"نيش"
+    },
+    {
+        "name":"MONALİSA",
+        "price":120,
+        "category":"نيش"
+    },
+    {
+        "name":"OPUS",
+        "price":131,
+        "category":"نيش"
+    },
+    {
+        "name":"PERA",
+        "price":120,
+        "category":"نيش"
+    },
+    {
+        "name":"MAD DRACO",
+        "price":150,
+        "category":"نيش"
+    },
+    {
+        "name":"PREVAIL",
+        "price":132,
+        "category":"نيش"
+    },
+    {
+        "name":"ROUGE EMPRESSA",
+        "price":132,
+        "category":"نيش"
+    },
+    {
+        "name":"ROUGE NIGHT",
+        "price":132,
+        "category":"نيش"
+    },
+    {
+        "name":"SECRET NIGHT",
+        "price":145,
+        "category":"نيش"
+    },
+    {
+        "name":"SENSE",
+        "price":120,
+        "category":"نيش"
+    },
+    {
+        "name":"SWEET BOUQUET",
+        "price":120,
+        "category":"نيش"
+    },
+    {
+        "name":"O-101 MALAKİ OUD",
+        "price":132,
+        "category":"نيش"
+    },
+    {
+        "name":"O-102 SATEEN OUD",
+        "price":132,
+        "category":"نيش"
+    },
+    {
+        "name":"O-103 WONDERWOOD OUD",
+        "price":132,
+        "category":"نيش"
+    },
+    {
+        "name":"MAD SPICE OUD",
+        "price":132,
+        "category":"نيش"
+    },
+    {
+        "name":"MAD DREAMLIGHT",
+        "price":145,
+        "category":"نيش"
+    },
+    {
+        "name":"MAD SEALIGHT",
+        "price":145,
+        "category":"نيش"
+    },
+    {
+        "name":"MAD STARLIGHT",
+        "price":145,
+        "category":"نيش"
+    },
+    {
+        "name":"MAD OMBRE",
+        "price":145,
+        "category":"نيش"
+    },
+    {
+        "name":"MID NIGHT",
+        "price":150,
+        "category":"نيش"
+    },
+    {
+        "name":"SHAH",
+        "price":250,
+        "category":"نيش"
+    },
+    {
+        "name":"MAD MARE",
+        "price":250,
+        "category":"نيش"
+    },
+    {
+        "name":"MAD LADY",
+        "price":250,
+        "category":"نيش"
+    },
+    {
+        "name":"KL.110. BODRUM TANGERINE",
+        "price":7,
+        "category":"كولونيا صغير"
+    },
+    {
+        "name":"KL.110.AMBER",
+        "price":7,
+        "category":"كولونيا صغير"
+    },
+    {
+        "name":"KL.110.AQUA DI BLUE",
+        "price":7,
+        "category":"كولونيا صغير"
+    },
+    {
+        "name":"KL.110.DREAM BOUQUET",
+        "price":7,
+        "category":"كولونيا صغير"
+    },
+    {
+        "name":"KL.110.FIG DESERT",
+        "price":7,
+        "category":"كولونيا صغير"
+    },
+    {
+        "name":"KL.110.GREEN TEA",
+        "price":7,
+        "category":"كولونيا صغير"
+    },
+    {
+        "name":"KL.110.ICE",
+        "price":7,
+        "category":"كولونيا صغير"
+    },
+    {
+        "name":"KL.110.JAPANESE CHERRY BLOSSOM",
+        "price":7,
+        "category":"كولونيا صغير"
+    },
+    {
+        "name":"KL.110.LIME",
+        "price":7,
+        "category":"كولونيا صغير"
+    },
+    {
+        "name":"KL.110.MIMOSA",
+        "price":7,
+        "category":"كولونيا صغير"
+    },
+    {
+        "name":"KL.110.SECRET GARDEN",
+        "price":7,
+        "category":"كولونيا صغير"
+    },
+    {
+        "name":"KL.200.AMBER",
+        "price":15,
+        "category":"كولونيا كبير"
+    },
+    {
+        "name":"KL.200.NEROLI",
+        "price":15,
+        "category":"كولونيا كبير"
+    },
+    {
+        "name":"KL.200.VELVET LAVENDER",
+        "price":15,
+        "category":"كولونيا كبير"
+    },
+    {
+        "name":"KL.200.BERGAMOT",
+        "price":15,
+        "category":"كولونيا كبير"
+    },
+    {
+        "name":"KL.200.AQUA DI BLUE",
+        "price":15,
+        "category":"كولونيا كبير"
+    },
+    {
+        "name":"KL.200.BODRUM TANGERINE",
+        "price":15,
+        "category":"كولونيا كبير"
+    },
+    {
+        "name":"KL.200.CLASSIC LEMON",
+        "price":15,
+        "category":"كولونيا كبير"
+    },
+    {
+        "name":"KL.200.DREAM BOUQUET",
+        "price":15,
+        "category":"كولونيا كبير"
+    },
+    {
+        "name":"KL.200.FIG DESERT",
+        "price":15,
+        "category":"كولونيا كبير"
+    },
+    {
+        "name":"KL.200.GREEN TEA",
+        "price":15,
+        "category":"كولونيا كبير"
+    },
+    {
+        "name":"KL.200.ICE",
+        "price":15,
+        "category":"كولونيا كبير"
+    },
+    {
+        "name":"KL.200.JAPANESE CHERRY BLOSSOM",
+        "price":15,
+        "category":"كولونيا كبير"
+    },
+    {
+        "name":"KL.200.LAVENDER",
+        "price":15,
+        "category":"كولونيا كبير"
+    },
+    {
+        "name":"KL.200.MIMOSA",
+        "price":15,
+        "category":"كولونيا كبير"
+    },
+    {
+        "name":"VANILLA CARNIVAL",
+        "price":32,
+        "category":"شمع 200 GR"
+    },
+    {
+        "name":"SPICY APPLE",
+        "price":32,
+        "category":"شمع 200 GR"
+    },
+    {
+        "name":"AUTUMN WIND",
+        "price":32,
+        "category":"شمع 200 GR"
+    },
+    {
+        "name":"SPRING",
+        "price":32,
+        "category":"شمع 200 GR"
+    },
+    {
+        "name":"WINTER TALE",
+        "price":32,
+        "category":"شمع 200 GR"
+    },
+    {
+        "name":"SUMMER TIME",
+        "price":32,
+        "category":"شمع 200 GR"
+    },
+    {
+        "name":"SUN SHINE",
+        "price":32,
+        "category":"شمع 200 GR"
+    },
+    {
+        "name":"WIZARD",
+        "price":32,
+        "category":"شمع 200 GR"
+    },
+    {
+        "name":"COFFEE BISQUIT",
+        "price":32,
+        "category":"شمع 200 GR"
+    },
+    {
+        "name":"PREVIL",
+        "price":37,
+        "category":"عيدان 160 مل"
+    },
+    {
+        "name":"NARCOTIC",
+        "price":37,
+        "category":"عيدان 160 مل"
+    },
+    {
+        "name":"COFFE BISQUIT",
+        "price":37,
+        "category":"عيدان 160 مل"
+    },
+    {
+        "name":"ROUGH NIGHT",
+        "price":37,
+        "category":"عيدان 160 مل"
+    },
+    {
+        "name":"WIZARD",
+        "price":37,
+        "category":"عيدان 160 مل"
+    },
+    {
+        "name":"SUN SHINE",
+        "price":37,
+        "category":"عيدان 160 مل"
+    },
+    {
+        "name":"VANILLA CARNAVAL",
+        "price":37,
+        "category":"عيدان 160 مل"
+    },
+    {
+        "name":"MUM.COFFEE BISCUIT",
+        "price":40,
+        "category":"شموع عادي"
+    },
+    {
+        "name":"MUM.HALLOWEEN",
+        "price":40,
+        "category":"شموع عادي"
+    },
+    {
+        "name":"MUM.PREVAIL",
+        "price":40,
+        "category":"شموع عادي"
+    },
+    {
+        "name":"MUM.SUNSHINE",
+        "price":40,
+        "category":"شموع عادي"
+    },
+    {
+        "name":"MUM.WIZARD",
+        "price":40,
+        "category":"شموع عادي"
+    },
+    {
+        "name":"OB.120.BOSPHORUS",
+        "price":24,
+        "category":"عيدان كبير"
+    },
+    {
+        "name":"OB.120.DEEP IMPRESSION",
+        "price":24,
+        "category":"عيدان كبير"
+    },
+    {
+        "name":"OB.120.DREAM BOUQUET",
+        "price":24,
+        "category":"عيدان كبير"
+    },
+    {
+        "name":"OB.120.FRUIT FUSION",
+        "price":24,
+        "category":"عيدان كبير"
+    },
+    {
+        "name":"OB.120.GOOD NIGHT KISS",
+        "price":24,
+        "category":"عيدان كبير"
+    },
+    {
+        "name":"OB.120.HIPNOTIZYA",
+        "price":24,
+        "category":"عيدان كبير"
+    },
+    {
+        "name":"OB.120.LIMPIO",
+        "price":24,
+        "category":"عيدان كبير"
+    },
+    {
+        "name":"OB.120.MONA ROSA",
+        "price":24,
+        "category":"عيدان كبير"
+    },
+    {
+        "name":"OB.120.PATCH",
+        "price":24,
+        "category":"عيدان كبير"
+    },
+    {
+        "name":"OB.120.PURE NATURAL",
+        "price":24,
+        "category":"عيدان كبير"
+    },
+    {
+        "name":"OB.120.PURPLE NIGHT",
+        "price":24,
+        "category":"عيدان كبير"
+    },
+    {
+        "name":"OB.120.RAIN FOREST",
+        "price":24,
+        "category":"عيدان كبير"
+    },
+    {
+        "name":"OB.120.STRONG STICK",
+        "price":24,
+        "category":"عيدان كبير"
+    },
+    {
+        "name":"OB.120.TURKISH BATH",
+        "price":24,
+        "category":"عيدان كبير"
+    },
+    {
+        "name":"OB.50.BUBBLE&SANDAL",
+        "price":12,
+        "category":"عيدان صغير"
+    },
+    {
+        "name":"OB.50.CARAMEL",
+        "price":12,
+        "category":"عيدان صغير"
+    },
+    {
+        "name":"OB.50.COCONUT",
+        "price":12,
+        "category":"عيدان صغير"
+    },
+    {
+        "name":"OB.50.EXOTIC OUD",
+        "price":12,
+        "category":"عيدان صغير"
+    },
+    {
+        "name":"OB.50.FRESH BREEZE",
+        "price":12,
+        "category":"عيدان صغير"
+    },
+    {
+        "name":"OB.50.KIWI",
+        "price":12,
+        "category":"عيدان صغير"
+    },
+    {
+        "name":"OB.50.OSMANTHUS",
+        "price":12,
+        "category":"عيدان صغير"
+    },
+    {
+        "name":"OB.50.PURE SHINE",
+        "price":12,
+        "category":"عيدان صغير"
+    },
+    {
+        "name":"OB.50.RED MOON",
+        "price":12,
+        "category":"عيدان صغير"
+    },
+    {
+        "name":"OB.50.ROSE&COFFEE",
+        "price":12,
+        "category":"عيدان صغير"
+    },
+    {
+        "name":"OB.50.VANILLA EFFECT",
+        "price":12,
+        "category":"عيدان صغير"
+    },
+    {
+        "name":"HP.160.BRAVE SELECTION",
+        "price":15,
+        "category":"عطر الشعر"
+    },
+    {
+        "name":"HP.160.EXOTIC FLOWERS",
+        "price":15,
+        "category":"عطر الشعر"
+    },
+    {
+        "name":"HP.160.PASSION FRUIT",
+        "price":15,
+        "category":"عطر الشعر"
+    },
+    {
+        "name":"HP.160.PEERLES DELIGHT",
+        "price":15,
+        "category":"عطر الشعر"
+    },
+    {
+        "name":"HP.160.PRETTY BEAUTY",
+        "price":15,
+        "category":"عطر الشعر"
+    },
+    {
+        "name":"BM.250.CHARM",
+        "price":30,
+        "category":"عطور الجسم"
+    },
+    {
+        "name":"BM.250.COCONUT SHINE",
+        "price":30,
+        "category":"عطور الجسم"
+    },
+    {
+        "name":"BM.250.SEA MIST",
+        "price":30,
+        "category":"عطور الجسم"
+    },
+    {
+        "name":"BM.250.SUN KISS",
+        "price":30,
+        "category":"عطور الجسم"
+    },
+    {
+        "name":"SWEET BEACH",
+        "price":30,
+        "category":"عطور الجسم"
+    },
+    {
+        "name":"DAY DREAM",
+        "price":30,
+        "category":"عطور الجسم"
+    },
+    {
+        "name":"BM.250.MYSTIC SUMMER",
+        "price":30,
+        "category":"عطور الجسم"
+    },
+    {
+        "name":"BM.250.VANILLA SKY ",
+        "price":30,
+        "category":"عطور الجسم"
+    },
+    {
+        "name":"RS.500.DREAM BOUQUET",
+        "price":30,
+        "category":"مرشات كبير"
+    },
+    {
+        "name":"RS.500.HIPNOTIZYA",
+        "price":30,
+        "category":"مرشات كبير"
+    },
+    {
+        "name":"RS.500.MONA ROSA",
+        "price":30,
+        "category":"مرشات كبير"
+    },
+    {
+        "name":"RS.500.PURE NATURAL",
+        "price":30,
+        "category":"مرشات كبير"
+    },
+    {
+        "name":"RS.500.RAIN FOREST",
+        "price":30,
+        "category":"مرشات كبير"
+    },
+    {
+        "name":"RS.500.TURKISH BATH",
+        "price":30,
+        "category":"مرشات كبير"
+    },
+    {
+        "name":"SS.250.AMBER",
+        "price":12,
+        "category":"صابون سائل"
+    },
+    {
+        "name":"SS.250.ICE",
+        "price":12,
+        "category":"صابون سائل"
+    },
+    {
+        "name":"SS.250.JAPANESE CHERRY BLOSSOM",
+        "price":12,
+        "category":"صابون سائل"
+    },
+    {
+        "name":"SS.250.VELVET LAVENDER",
+        "price":12,
+        "category":"صابون سائل"
+    },
+    {
+        "name":"CP.5.BLACK REFIL",
+        "price":17,
+        "category":"جهاز تعبئه العطر "
+    },
+    {
+        "name":"CP.5.SILVER REFIL",
+        "price":17,
+        "category":"جهاز تعبئه العطر "
+    },
+    {
+        "name":"CP.5.RED REFIL",
+        "price":17,
+        "category":"جهاز تعبئه العطر "
+    },
+    {
+        "name":"تستر صغير",
+        "price":5,
+        "category":"أكياس ولاوزم اخرى تساتر الخ"
+    },
+    {
+        "name":"ورق رش ",
+        "price":20,
+        "category":"أكياس ولاوزم اخرى تساتر الخ"
+    },
+    {
+        "name":"كيس صيني صغير",
+        "price":"1,30",
+        "category":"أكياس ولاوزم اخرى تساتر الخ"
+    },
+    {
+        "name":"كيس تركي صغير",
+        "price":1,
+        "category":"أكياس ولاوزم اخرى تساتر الخ"
+    },
+    {
+        "name":"RAIN FORREST",
+        "price":22,
+        "category":"مرشات صغير"
+    },
+    {
+        "name":"MONA ROSA",
+        "price":22,
+        "category":"مرشات صغير"
+    },
+    {
+        "name":"TURKISH BATH",
+        "price":22,
+        "category":"مرشات صغير"
+    },
+    {
+        "name":"DEREAM BOUQET",
+        "price":22,
+        "category":"مرشات صغير"
+    },
+    {
+        "name":"PURE NATURAL",
+        "price":22,
+        "category":"مرشات صغير"
+    },
+    {
+        "name":"HIPONYTZYA",
+        "price":22,
+        "category":"مرشات صغير"
+    }
+];
         const cart = [];
         const categories = Array.from(new Set(products.map(product => product.category)));
+        const taxRate = 0.18;
 
         const categorySelect = document.getElementById('categoryFilter');
         categories.forEach(category => {
@@ -137,12 +1795,30 @@
         function updateCart() {
             const cartItems = document.getElementById('cartItems');
             cartItems.innerHTML = '';
+            let total = 0;
 
             cart.forEach(item => {
                 const div = document.createElement('div');
                 div.textContent = `${item.name} - الكمية: ${item.quantity} - السعر الإجمالي: ${item.price * item.quantity}₪`;
                 cartItems.appendChild(div);
+                total += item.price * item.quantity;
             });
+
+            const totalWithTax = (total * (1 + taxRate)).toFixed(2);
+            document.getElementById('totalWithTax').textContent = `السعر بعد الضريبة: ${totalWithTax}₪`;
+        }
+
+        function sendOrder() {
+            let message = 'طلب جديد:\n';
+            cart.forEach(item => {
+                message += `${item.name} - الكمية: ${item.quantity}\n`;
+            });
+            const whatsappUrl = `https://wa.me/972525105889?text=${encodeURIComponent(message)}`;
+            window.open(whatsappUrl, '_blank');
+        }
+
+        function printOrder() {
+            window.print();
         }
 
         searchProducts();
