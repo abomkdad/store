@@ -141,23 +141,9 @@
         }
 
         function sendOrder() {
-            let message = 'طلب جديد:
-';
-            let total = 0;
-
+            let message = 'طلب جديد:\n';
             cart.forEach(item => {
-                message += `${item.name} - الكمية: ${item.quantity}
-`;
-                total += item.price * item.quantity;
-            });
-
-            const totalWithTax = (total * (1 + taxRate)).toFixed(2);
-            message += `
-السعر الإجمالي بعد الضريبة: ${totalWithTax}₪`;
-
-            const whatsappUrl = `https://wa.me/972525105889?text=${encodeURIComponent(message)}`;
-            window.open(whatsappUrl, '_blank');
-        } - الكمية: ${item.quantity}\n`;
+                message += `${item.name} - الكمية: ${item.quantity}\n`;
             });
             const whatsappUrl = `https://wa.me/972525105889?text=${encodeURIComponent(message)}`;
             window.open(whatsappUrl, '_blank');
@@ -165,22 +151,9 @@
 
         function printOrder() {
             const printWindow = window.open('', '', 'width=800,height=600');
-            let total = 0;
-
             printWindow.document.write('<html><head><title>طباعة الطلب</title></head><body>');
-
             cart.forEach(item => {
                 printWindow.document.write(`<p>${item.name} - الكمية: ${item.quantity} - السعر الإجمالي: ${item.price * item.quantity}₪</p>`);
-                total += item.price * item.quantity;
-            });
-
-            const totalWithTax = (total * (1 + taxRate)).toFixed(2);
-            printWindow.document.write(`<h3>السعر الإجمالي بعد الضريبة: ${totalWithTax}₪</h3>`);
-
-            printWindow.document.write('</body></html>');
-            printWindow.document.close();
-            printWindow.print();
-        } - الكمية: ${item.quantity} - السعر الإجمالي: ${item.price * item.quantity}₪</p>`);
             });
             printWindow.document.write('</body></html>');
             printWindow.document.close();
