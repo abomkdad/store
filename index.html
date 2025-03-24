@@ -79,7 +79,14 @@
         <div id="productList"></div>
     </div>
     <script>
-        const products = [...];
+        const products = [
+            { name: "XF A.104", price: 47, category: "نسائي" },
+            { name: "XM A.102", price: 47, category: "رجالي" },
+            { name: "XU Q.101", price: 47, category: "يونيسكس" },
+            { name: "XN B.205", price: 55, category: "نسائي" },
+            { name: "XR M.301", price: 65, category: "رجالي" },
+            { name: "XC U.401", price: 60, category: "يونيسكس" }
+        ];
         const categories = Array.from(new Set(products.map(product => product.category)));
 
         const categorySelect = document.getElementById('categoryFilter');
