@@ -1,2204 +1,294 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>📦 مدير الفرع MAD</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600&display=swap" rel="stylesheet">
+    <title>Product Ordering System</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
-        body {
-            font-family: 'Cairo', sans-serif;
-            background-color: #f0f4c3;
-            margin: 0;
-            padding: 0;
+        body { background-color: #f3f4f6; }
+        .product-card {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+            transition: transform 0.2s;
             display: flex;
             flex-direction: column;
             align-items: center;
-            min-height: 100vh;
+            color: #334155;
         }
-        h2 {
-            color: #00897b;
-            margin-top: 20px;
+        .product-card:hover {
+            transform: scale(1.05);
         }
-        #productListContainer {
-            margin-bottom: 20px;
-            width: 90%;
-            max-width: 600px;
+        .product-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-top: 0.75rem;
+            margin-bottom: 0.5rem;
+            text-align: center;
         }
-        #searchInput {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 16px;
-            margin-bottom: 10px;
-            box-sizing: border-box;
-            font-family: 'Cairo', sans-serif;
-        }
-        #searchInput:focus {
-            outline: none;
-            border-color: #00897b;
-            box-shadow: 0 0 5px rgba(0, 137, 123, 0.3);
+        .product-description {
+            font-size: 0.875rem;
+            text-align: center;
+            margin-bottom: 0.75rem;
+            color: #64748b;
+            line-height: 1.5;
         }
         #productList {
-            max-height: 200px;
+            height: 70vh;
             overflow-y: auto;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            background-color: #fff;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-        #productList div {
-            padding: 12px;
-            cursor: pointer;
-            border-bottom: 1px solid #e0e0e0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 16px;
-        }
-        #productList div:hover {
-            background-color: #f5f5f5;
-        }
-        #productList div span {
-            color: #888;
-        }
-        #productList div button {
-            background-color: #00897b;
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: background-color 0.3s ease;
-            font-family: 'Cairo', sans-serif;
-        }
-        #productList div button:hover {
-            background-color: #00695c;
-        }
-        #orderTable {
-            width: 90%;
-            max-width: 600px;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-            background-color: #fff;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            margin-top: 0;
-        }
-        #orderTable th, #orderTable td {
-            border: 1px solid #ddd;
-            padding: 12px;
-            text-align: center;
-            font-size: 16px;
-        }
-        #orderTable th {
-            background-color: #c5e1a5;
-            color: #000;
-        }
-        #orderTable input[type="number"] {
-            width: 80px;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 16px;
-            text-align: center;
-            box-sizing: border-box;
-            font-family: 'Cairo', sans-serif;
-        }
-        #orderTable input[type="number"]:focus {
-            outline: none;
-            border-color: #00897b;
-            box-shadow: 0 0 5px rgba(0, 137, 123, 0.3);
-        }
-        #orderTable button {
-            background-color: #ef5350;
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: background-color 0.3s ease;
-            font-family: 'Cairo', sans-serif;
-        }
-        #orderTable button:hover {
-            background-color: #c62828;
-        }
-        .buttonContainer {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-bottom: 20px;
-            width: 90%;
-            max-width: 600px;
-            align-items: stretch;
-        }
-        .buttonContainer button {
-            padding: 12px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 18px;
-            transition: background-color 0.3s ease;
-            font-family: 'Cairo', sans-serif;
-        }
-        .buttonContainer button:first-child {
-            background-color: #00897b;
-            color: white;
-        }
-        .buttonContainer button:first-child:hover {
-            background-color: #00695c;
-        }
-        .buttonContainer button:nth-child(2) {
-            background-color: #43a047;
-            color: white;
-        }
-        .buttonContainer button:nth-child(2):hover {
-            background-color: #2e7d32;
-        }
-        .buttonContainer button:last-child {
-            background-color: #311b92;
-            color: white;
-        }
-        .buttonContainer button:last-child:hover {
-            background-color: #1a237e;
-        }
-        #adminPanel {
-            margin-top: 20px;
-            padding: 20px;
+            padding: 10px;
+            border: 1px solid #cbd5e0;
+            border-radius: 10px;
+            margin-bottom: 60px;
             background-color: white;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            width: 90%;
-            max-width: 600px;
-            box-sizing: border-box;
-            display: none;
         }
-        #adminPanel h3 {
-            color: #00897b;
-            margin-bottom: 15px;
-            text-align: center;
+        #cartDisplay {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: white;
+            padding: 15px;
+            border-top: 3px solid #22c55e;
+            max-height: 250px;
+            overflow-y: auto;
+            color: #334155;
         }
-        #adminPanel input[type="text"],
-        #adminPanel input[type="number"] {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 16px;
-            margin-bottom: 10px;
-            box-sizing: border-box;
-            font-family: 'Cairo', sans-serif;
-        }
-        #adminPanel input[type="text"]:focus,
-        #adminPanel input[type="number"]:focus {
-            outline: none;
-            border-color: #00897b;
-            box-shadow: 0 0 5px rgba(0, 137, 123, 0.3);
-        }
-        #adminPanel button {
-            background-color: #00897b;
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s ease;
-            width: 100%;
-            font-family: 'Cairo', sans-serif;
-        }
-        #adminPanel button:hover {
-            background-color: #00695c;
-        }
-        #adminCodeContainer {
-            margin-bottom: 20px;
-            width: 90%;
-            max-width: 600px;
+        .cart-item {
             display: flex;
-            flex-direction: column;
-            align-items: stretch;
+            align-items: center;
+            margin-bottom: 1rem;
         }
-        #adminCodeContainer label {
-            margin-bottom: 5px;
-            font-size: 16px;
-            color: #555;
-            font-family: 'Cairo', sans-serif;
+        .cart-item img {
+            width: 50px;
+            height: 50px;
+            margin-right: 1rem;
+            border-radius: 0.5rem;
         }
-        #adminCodeContainer input[type="password"] {
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 16px;
-            margin-bottom: 10px;
-            box-sizing: border-box;
-            font-family: 'Cairo', sans-serif;
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
         }
-        #adminCodeContainer input[type="password"]:focus {
-            outline: none;
-            border-color: #00897b;
-            box-shadow: 0 0 5px rgba(0, 137, 123, 0.3);
+        .modal-content {
+            background-color: #fefefe;
+            margin: 0 auto; /* إزالة الهوامش */
+            top: 0; /* تثبيت في الأعلى */
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            border-radius: 10px;
+            position: fixed; /* تغيير الوضع إلى ثابت */
+            z-index: 10; /* التأكد من ظهورها فوق العناصر الأخرى */
         }
-        #adminCodeContainer button {
-            background-color: #00897b;
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s ease;
-            font-family: 'Cairo', sans-serif;
+        #closeModal {
+            color: #64748b;
+            font-size: 1.75rem;
         }
-        #adminCodeContainer button:hover {
-            background-color: #00695c;
+        #closeModal:hover,
+        #closeModal:focus {
+            color: #334155;
         }
-        @media (max-width: 640px) {
-            #productListContainer,
-            #orderTable,
-            .buttonContainer,
-            #adminPanel,
-            #adminCodeContainer {
-                width: 95%;
-            }
-            .buttonContainer button {
-                font-size: 16px;
-                padding: 10px 18px;
-            }
-            #orderTable th, #orderTable td{
-                font-size: 14px;
-                padding: 10px;
-            }
+        #confirmationMessage {
+            position: fixed;
+            top: 1.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #86efac;
+            color: #1e293b;
+            padding: 1rem 2rem;
+            border-radius: 0.375rem;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
         }
+        /* إزالة CSS الخاص بالطباعة */
     </style>
 </head>
 <body>
-    <h2>📦 إدخال الطلبات</h2>
-    <div id="adminCodeContainer">
-        <label for="adminCode">ادخل رمز لوحة التحكم:</label>
-        <input type="password" id="adminCode" placeholder="الرمز">
-        <button onclick="verifyCode()">دخول</button>
-    </div>
-    <div id="productListContainer">
-        <input type="text" id="searchInput" onkeyup="searchDropdown()" placeholder="🔍 البحث عن منتج...">
-        <div id="productList"></div>
-    </div>
-    <table id="orderTable">
-        <thead>
-            <tr>
-                <th>📦 المنتج</th>
-                <th>📊 العدد</th>
-                 <th>السعر</th>
-                <th>🗑️ حذف</th>
-            </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
-    <div class="buttonContainer">
-        <button onclick="sendOrder()">📩 إرسال الطلب عبر واتساب</button>
-        <button onclick="clearOrder()">🗑️ تفريغ الطلب</button>
-        <button onclick="printOrder()">🖨️ طباعة الطلب</button>
-    </div>
-    <div id="adminPanel" style="display: none;">
-        <h3>لوحة تحكم المسؤول</h3>
-        <input type="text" id="newProductName" placeholder="اسم المنتج">
-         <input type="text" id="newProductCategory" placeholder="فئة المنتج">
-        <input type="number" id="newProductPrice" placeholder="السعر">
-        <button onclick="addProduct()">إضافة منتج</button>
+    <div class="container mx-auto p-2">
+        <div class="flex justify-between items-center mb-4">
+            <input id="searchInput" type="text" placeholder="ابحث عن المنتج..." class="border p-2 rounded w-full">
+        </div>
+        <div id="productList" class="grid grid-cols-3 gap-2"></div>
+        <div id="cartDisplay"></div>
+
+        <div id="productModal" class="modal">
+            <div class="modal-content">
+                <span id="closeModal">&times;</span>
+                <div id="modalContent"></div>
+            </div>
+        </div>
+        <div id="confirmationMessage">התווסף לסל!</div>
     </div>
 
     <script>
-        const adminPassword = "5050";
-        let products = [
-    {
-        "name":"XF A.104",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF A.112",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF A.113",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF A.114",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF A.117",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF A.118",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF A.120",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF A.122",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF B.103",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF B.104",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF B.105",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF B.106",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF B.107",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF C.119",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF C.120",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF C.121",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF C.123",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF C.126",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF D.114",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF D.115",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF D.116",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF D.117",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF D.119",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF D.121",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF E.104",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF E.117",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF G.101",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF G.103",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF G.104",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF G.106",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF G.107",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF H.102",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF H.103",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF H.104",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF H.105",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF J.101",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF J.102",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF J.103",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF J.106",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF K.101",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF K.103",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF L.101",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF L.102",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF L.103",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF L.112",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF L.113",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF N.101",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF N.105",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF N.106",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF P.101",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF P.104",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF P.105",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF P.107",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF R.105",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF R.109",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF R.110",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF V.101",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF V.102",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF V.103",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF V.105",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF V.106",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF V.109",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF V.110",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF V.112",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF W.113",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF W.125",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF W.132",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF W.144",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF W.150",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF W.152",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF W.153",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF W.154",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF W.155",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF W.160",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF W.162",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF W.164",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF W.165",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF W.174",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF W.175",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF W.183",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF W.184",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF W.185",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF W.201",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF W.203",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF W.204",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF W.208",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF W.209",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF W.212",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF W.213",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF W.214",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF W.217",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF W.222",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF Y.101",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF Y.102",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XF Z.101",
-        "price":47,
-        "category":"نسائي"
-    },
-    {
-        "name":"XM A.102",
-        "price":47,
-        "category":"رجالي"
-    },
-    {
-        "name":"XM A.104",
-        "price":47,
-        "category":"رجالي"
-    },
-    {
-        "name":"XM A.113",
-        "price":47,
-        "category":"رجالي"
-    },
-    {
-        "name":"XM A.114",
-        "price":47,
-        "category":"رجالي"
-    },
-    {
-        "name":"XM A.115",
-        "price":47,
-        "category":"رجالي"
-    },
-    {
-        "name":"XM B.102",
-        "price":47,
-        "category":"رجالي"
-    },
-    {
-        "name":"XM B.103",
-        "price":47,
-        "category":"رجالي"
-    },
-    {
-        "name":"XM B.104",
-        "price":47,
-        "category":"رجالي"
-    },
-    {
-        "name":"XM B.106",
-        "price":47,
-        "category":"رجالي"
-    },
-    {
-        "name":"XM B.107",
-        "price":47,
-        "category":"رجالي"
-    },
-    {
-        "name":"XM B.108",
-        "price":47,
-        "category":"رجالي"
-    },
-    {
-        "name":"XM C.101",
-        "price":47,
-        "category":"رجالي"
-    },
-    {
-        "name":"XM C.108",
-        "price":47,
-        "category":"رجالي"
-    },
-    {
-        "name":"XM C.109",
-        "price":47,
-        "category":"رجالي"
-    },
-    {
-        "name":"XM C.114",
-        "price":47,
-        "category":"رجالي"
-    },
-    {
-        "name":"XM D.102",
-        "price":47,
-        "category":"رجالي"
-    },
-    {
-        "name":"XM D.110",
-        "price":47,
-        "category":"رجالي"
-    },
-    {
-        "name":"XM F.101",
-        "price":47,
-        "category":"رجالي"
-    },
-    {
-        "name":"XM G.101",
-        "price":47,
-        "category":"رجالي"
-    },
-    {
-        "name":"XM H.101",
-        "price":47,
-        "category":"رجالي"
-    },
-    {
-        "name":"XM I.101",
-        "price":47,
-        "category":"رجالي"
-    },
-    {
-        "name":"XM I.103",
-        "price":47,
-        "category":"رجالي"
-    },
-    {
-        "name":"XM I.104",
-        "price":47,
-        "category":"رجالي"
-    },
-    {
-        "name":"XM J.101",
-        "price":47,
-        "category":"رجالي"
-    },
-    {
-        "name":"XM J.102",
-        "price":47,
-        "category":"رجالي"
-    },
-    {
-        "name":"XM J.104",
-        "price":47,
-        "category":"رجالي"
-    },
-    {
-        "name":"XM J.107",
-        "price":47,
-        "category":"رجالي"
-    },
-    {
-        "name":"XM K.101",
-        "price":47,
-        "category":"رجالي"
-    },
-    {
-        "name":"XM L.105",
-        "price":47,
-        "category":"رجالي"
-    },
-    {
-        "name":"XM L.106",
-        "price":47,
-        "category":"رجالي"
-    },
-    {
-        "name":"XM P.101",
-        "price":47,
-        "category":"رجالي"
-    },
-    {
-        "name":"XM P.102",
-        "price":47,
-        "category":"رجالي"
-    },
-    {
-        "name":"XM P.103",
-        "price":47,
-        "category":"رجالي"
-    },
-    {
-        "name":"XM P.109",
-        "price":47,
-        "category":"رجالي"
-    },
-    {
-        "name":"XM R.103",
-        "price":47,
-        "category":"رجالي"
-    },
-    {
-        "name":"XM W.120",
-        "price":47,
-        "category":"رجالي"
-    },
-    {
-        "name":"XM W.122",
-        "price":47,
-        "category":"رجالي"
-    },
-    {
-        "name":"XM W.126",
-        "price":47,
-        "category":"رجالي"
-    },
-    {
-        "name":"XM W.128",
-        "price":47,
-        "category":"رجالي"
-    },
-    {
-        "name":"XM W.129",
-        "price":47,
-        "category":"رجالي"
-    },
-    {
-        "name":"XM W.133",
-        "price":47,
-        "category":"رجالي"
-    },
-    {
-        "name":"XM W.139",
-        "price":47,
-        "category":"رجالي"
-    },
-    {
-        "name":"XM W.142",
-        "price":47,
-        "category":"رجالي"
-    },
-    {
-        "name":"XM W.143",
-        "price":47,
-        "category":"رجالي"
-    },
-    {
-        "name":"XM W.150",
-        "price":47,
-        "category":"رجالي"
-    },
-    {
-        "name":"XM W.158",
-        "price":47,
-        "category":"رجالي"
-    },
-    {
-        "name":"XM W.160",
-        "price":47,
-        "category":"رجالي"
-    },
-    {
-        "name":"XM W.161",
-        "price":47,
-        "category":"رجالي"
-    },
-    {
-        "name":"XM W.163",
-        "price":47,
-        "category":"رجالي"
-    },
-    {
-        "name":"XM W.164",
-        "price":47,
-        "category":"رجالي"
-    },
-    {
-        "name":"XM W.171",
-        "price":47,
-        "category":"رجالي"
-    },
-    {
-        "name":"XM W.174",
-        "price":47,
-        "category":"رجالي"
-    },
-    {
-        "name":"XM W.180",
-        "price":47,
-        "category":"رجالي"
-    },
-    {
-        "name":"XM W.183",
-        "price":47,
-        "category":"رجالي"
-    },
-    {
-        "name":"XM W.184",
-        "price":47,
-        "category":"رجالي"
-    },
-    {
-        "name":"XM W.189",
-        "price":47,
-        "category":"رجالي"
-    },
-    {
-        "name":"XM W.191",
-        "price":47,
-        "category":"رجالي"
-    },
-    {
-        "name":"XM W.192",
-        "price":47,
-        "category":"رجالي"
-    },
-    {
-        "name":"XM Y.102",
-        "price":47,
-        "category":"رجالي"
-    },
-    {
-        "name":"XU Q.101",
-        "price":47,
-        "category":"يونيسكس"
-    },
-    {
-        "name":"XU Q.102",
-        "price":47,
-        "category":"يونيسكس"
-    },
-    {
-        "name":"XU Q.103",
-        "price":47,
-        "category":"يونيسكس"
-    },
-    {
-        "name":"XU Q.104",
-        "price":47,
-        "category":"يونيسكس"
-    },
-    {
-        "name":"XU Q.105",
-        "price":47,
-        "category":"يونيسكس"
-    },
-    {
-        "name":"XU Q.106",
-        "price":47,
-        "category":"يونيسكس"
-    },
-    {
-        "name":"XU Q.107",
-        "price":47,
-        "category":"يونيسكس"
-    },
-    {
-        "name":"XU Q.108",
-        "price":47,
-        "category":"يونيسكس"
-    },
-    {
-        "name":"XU Q.109",
-        "price":47,
-        "category":"يونيسكس"
-    },
-    {
-        "name":"XU Q.110",
-        "price":47,
-        "category":"يونيسكس"
-    },
-    {
-        "name":"XU Q.111",
-        "price":47,
-        "category":"يونيسكس"
-    },
-    {
-        "name":"AP.8.GOOD NIGHT KISS",
-        "price":6,
-        "category":"سيارات"
-    },
-    {
-        "name":"AP.8.HIPNOTIZYA",
-        "price":6,
-        "category":"سيارات"
-    },
-    {
-        "name":"AP.8.KARPUZ ÇİLEK",
-        "price":6,
-        "category":"سيارات"
-    },
-    {
-        "name":"AP.8.KAVUN",
-        "price":6,
-        "category":"سيارات"
-    },
-    {
-        "name":"AP.8.LIMPIO",
-        "price":6,
-        "category":"سيارات"
-    },
-    {
-        "name":"AP.8.MONA ROSA",
-        "price":6,
-        "category":"سيارات"
-    },
-    {
-        "name":"AP.8.PATCH",
-        "price":6,
-        "category":"سيارات"
-    },
-    {
-        "name":"AP.8.REBORN",
-        "price":6,
-        "category":"سيارات"
-    },
-    {
-        "name":"AP.8.YEŞİL ELMA",
-        "price":6,
-        "category":"سيارات"
-    },
-    {
-        "name":"BRUNO GOLD INTENSE",
-        "price":137,
-        "category":"نيش"
-    },
-    {
-        "name":"BY BRUNO CASANOVA",
-        "price":120,
-        "category":"نيش"
-    },
-    {
-        "name":"BY BRUNO DETOX",
-        "price":120,
-        "category":"نيش"
-    },
-    {
-        "name":"BY BRUNO EXOTIC",
-        "price":120,
-        "category":"نيش"
-    },
-    {
-        "name":"BY BRUNO GOLD",
-        "price":132,
-        "category":"نيش"
-    },
-    {
-        "name":"DESERTO",
-        "price":131,
-        "category":"نيش"
-    },
-    {
-        "name":"DIVINE DESIRE",
-        "price":120,
-        "category":"نيش"
-    },
-    {
-        "name":"DIVINE TOUGH",
-        "price":120,
-        "category":"نيش"
-    },
-    {
-        "name":"EFFECT",
-        "price":128,
-        "category":"نيش"
-    },
-    {
-        "name":"EGO",
-        "price":132,
-        "category":"نيش"
-    },
-    {
-        "name":"FORZA",
-        "price":131,
-        "category":"نيش"
-    },
-    {
-        "name":"GRANDE NOTTE",
-        "price":131,
-        "category":"نيش"
-    },
-    {
-        "name":"GUMIN",
-        "price":132,
-        "category":"نيش"
-    },
-    {
-        "name":"INSPIRATION",
-        "price":120,
-        "category":"نيش"
-    },
-    {
-        "name":"INVITING",
-        "price":120,
-        "category":"نيش"
-    },
-    {
-        "name":"MAD ABSOLUTELY",
-        "price":120,
-        "category":"نيش"
-    },
-    {
-        "name":"MAD DEVILS TRICK",
-        "price":128,
-        "category":"نيش"
-    },
-    {
-        "name":"MAD GOLDEN AGE",
-        "price":131,
-        "category":"نيش"
-    },
-    {
-        "name":"MAD GOLDEN FEEL",
-        "price":131,
-        "category":"نيش"
-    },
-    {
-        "name":"MAD GOLDEN GLORY",
-        "price":131,
-        "category":"نيش"
-    },
-    {
-        "name":"MAD GOLDEN SOUL",
-        "price":131,
-        "category":"نيش"
-    },
-    {
-        "name":"MAD NARCOTIC",
-        "price":140,
-        "category":"نيش"
-    },
-    {
-        "name":"MAD NARCOTIC INTENSE",
-        "price":137,
-        "category":"نيش"
-    },
-    {
-        "name":"MAD NEW YORK NIGHT",
-        "price":160,
-        "category":"نيش"
-    },
-    {
-        "name":"MAD OUD SUPREME",
-        "price":157,
-        "category":"نيش"
-    },
-    {
-        "name":"Mad Rouge",
-        "price":140,
-        "category":"نيش"
-    },
-    {
-        "name":"MAD SAPPHIRE",
-        "price":157,
-        "category":"نيش"
-    },
-    {
-        "name":"MADAM AMOUR",
-        "price":131,
-        "category":"نيش"
-    },
-    {
-        "name":"MADAM THE ROMAN NIGHT",
-        "price":131,
-        "category":"نيش"
-    },
-    {
-        "name":"MONALİSA",
-        "price":120,
-        "category":"نيش"
-    },
-    {
-        "name":"OPUS",
-        "price":131,
-        "category":"نيش"
-    },
-    {
-        "name":"PERA",
-        "price":120,
-        "category":"نيش"
-    },
-    {
-        "name":"MAD DRACO",
-        "price":150,
-        "category":"نيش"
-    },
-    {
-        "name":"PREVAIL",
-        "price":132,
-        "category":"نيش"
-    },
-    {
-        "name":"ROUGE EMPRESSA",
-        "price":132,
-        "category":"نيش"
-    },
-    {
-        "name":"ROUGE NIGHT",
-        "price":132,
-        "category":"نيش"
-    },
-    {
-        "name":"SECRET NIGHT",
-        "price":145,
-        "category":"نيش"
-    },
-    {
-        "name":"SENSE",
-        "price":120,
-        "category":"نيش"
-    },
-    {
-        "name":"SWEET BOUQUET",
-        "price":120,
-        "category":"نيش"
-    },
-    {
-        "name":"O-101 MALAKİ OUD",
-        "price":132,
-        "category":"نيش"
-    },
-    {
-        "name":"O-102 SATEEN OUD",
-        "price":132,
-        "category":"نيش"
-    },
-    {
-        "name":"O-103 WONDERWOOD OUD",
-        "price":132,
-        "category":"نيش"
-    },
-    {
-        "name":"MAD SPICE OUD",
-        "price":132,
-        "category":"نيش"
-    },
-    {
-        "name":"MAD DREAMLIGHT",
-        "price":145,
-        "category":"نيش"
-    },
-    {
-        "name":"MAD SEALIGHT",
-        "price":145,
-        "category":"نيش"
-    },
-    {
-        "name":"MAD STARLIGHT",
-        "price":145,
-        "category":"نيش"
-    },
-    {
-        "name":"MAD OMBRE",
-        "price":145,
-        "category":"نيش"
-    },
-    {
-        "name":"MID NIGHT",
-        "price":150,
-        "category":"نيش"
-    },
-    {
-        "name":"SHAH",
-        "price":250,
-        "category":"نيش"
-    },
-    {
-        "name":"MAD MARE",
-        "price":250,
-        "category":"نيش"
-    },
-    {
-        "name":"MAD LADY",
-        "price":250,
-        "category":"نيش"
-    },
-    {
-        "name":"KL.110. BODRUM TANGERINE",
-        "price":7,
-        "category":"كولونيا صغير"
-    },
-    {
-        "name":"KL.110.AMBER",
-        "price":7,
-        "category":"كولونيا صغير"
-    },
-    {
-        "name":"KL.110.AQUA DI BLUE",
-        "price":7,
-        "category":"كولونيا صغير"
-    },
-    {
-        "name":"KL.110.DREAM BOUQUET",
-        "price":7,
-        "category":"كولونيا صغير"
-    },
-    {
-        "name":"KL.110.FIG DESERT",
-        "price":7,
-        "category":"كولونيا صغير"
-    },
-    {
-        "name":"KL.110.GREEN TEA",
-        "price":7,
-        "category":"كولونيا صغير"
-    },
-    {
-        "name":"KL.110.ICE",
-        "price":7,
-        "category":"كولونيا صغير"
-    },
-    {
-        "name":"KL.110.JAPANESE CHERRY BLOSSOM",
-        "price":7,
-        "category":"كولونيا صغير"
-    },
-    {
-        "name":"KL.110.LIME",
-        "price":7,
-        "category":"كولونيا صغير"
-    },
-    {
-        "name":"KL.110.MIMOSA",
-        "price":7,
-        "category":"كولونيا صغير"
-    },
-    {
-        "name":"KL.110.SECRET GARDEN",
-        "price":7,
-        "category":"كولونيا صغير"
-    },
-    {
-        "name":"KL.200.AMBER",
-        "price":15,
-        "category":"كولونيا كبير"
-    },
-    {
-        "name":"KL.200.NEROLI",
-        "price":15,
-        "category":"كولونيا كبير"
-    },
-    {
-        "name":"KL.200.VELVET LAVENDER",
-        "price":15,
-        "category":"كولونيا كبير"
-    },
-    {
-        "name":"KL.200.BERGAMOT",
-        "price":15,
-        "category":"كولونيا كبير"
-    },
-    {
-        "name":"KL.200.AQUA DI BLUE",
-        "price":15,
-        "category":"كولونيا كبير"
-    },
-    {
-        "name":"KL.200.BODRUM TANGERINE",
-        "price":15,
-        "category":"كولونيا كبير"
-    },
-    {
-        "name":"KL.200.CLASSIC LEMON",
-        "price":15,
-        "category":"كولونيا كبير"
-    },
-    {
-        "name":"KL.200.DREAM BOUQUET",
-        "price":15,
-        "category":"كولونيا كبير"
-    },
-    {
-        "name":"KL.200.FIG DESERT",
-        "price":15,
-        "category":"كولونيا كبير"
-    },
-    {
-        "name":"KL.200.GREEN TEA",
-        "price":15,
-        "category":"كولونيا كبير"
-    },
-    {
-        "name":"KL.200.ICE",
-        "price":15,
-        "category":"كولونيا كبير"
-    },
-    {
-        "name":"KL.200.JAPANESE CHERRY BLOSSOM",
-        "price":15,
-        "category":"كولونيا كبير"
-    },
-    {
-        "name":"KL.200.LAVENDER",
-        "price":15,
-        "category":"كولونيا كبير"
-    },
-    {
-        "name":"KL.200.MIMOSA",
-        "price":15,
-        "category":"كولونيا كبير"
-    },
-    {
-        "name":"VANILLA CARNIVAL",
-        "price":32,
-        "category":"شمع 200 GR"
-    },
-    {
-        "name":"SPICY APPLE",
-        "price":32,
-        "category":"شمع 200 GR"
-    },
-    {
-        "name":"AUTUMN WIND",
-        "price":32,
-        "category":"شمع 200 GR"
-    },
-    {
-        "name":"SPRING",
-        "price":32,
-        "category":"شمع 200 GR"
-    },
-    {
-        "name":"WINTER TALE",
-        "price":32,
-        "category":"شمع 200 GR"
-    },
-    {
-        "name":"SUMMER TIME",
-        "price":32,
-        "category":"شمع 200 GR"
-    },
-    {
-        "name":"SUN SHINE",
-        "price":32,
-        "category":"شمع 200 GR"
-    },
-    {
-        "name":"WIZARD",
-        "price":32,
-        "category":"شمع 200 GR"
-    },
-    {
-        "name":"COFFEE BISQUIT",
-        "price":32,
-        "category":"شمع 200 GR"
-    },
-    {
-        "name":"PREVIL",
-        "price":37,
-        "category":"عيدان 160 مل"
-    },
-    {
-        "name":"NARCOTIC",
-        "price":37,
-        "category":"عيدان 160 مل"
-    },
-    {
-        "name":"COFFE BISQUIT",
-        "price":37,
-        "category":"عيدان 160 مل"
-    },
-    {
-        "name":"ROUGH NIGHT",
-        "price":37,
-        "category":"عيدان 160 مل"
-    },
-    {
-        "name":"WIZARD",
-        "price":37,
-        "category":"عيدان 160 مل"
-    },
-    {
-        "name":"SUN SHINE",
-        "price":37,
-        "category":"عيدان 160 مل"
-    },
-    {
-        "name":"VANILLA CARNAVAL",
-        "price":37,
-        "category":"عيدان 160 مل"
-    },
-    {
-        "name":"MUM.COFFEE BISCUIT",
-        "price":40,
-        "category":"شموع عادي"
-    },
-    {
-        "name":"MUM.HALLOWEEN",
-        "price":40,
-        "category":"شموع عادي"
-    },
-    {
-        "name":"MUM.PREVAIL",
-        "price":40,
-        "category":"شموع عادي"
-    },
-    {
-        "name":"MUM.SUNSHINE",
-        "price":40,
-        "category":"شموع عادي"
-    },
-    {
-        "name":"MUM.WIZARD",
-        "price":40,
-        "category":"شموع عادي"
-    },
-    {
-        "name":"OB.120.BOSPHORUS",
-        "price":24,
-        "category":"عيدان كبير"
-    },
-    {
-        "name":"OB.120.DEEP IMPRESSION",
-        "price":24,
-        "category":"عيدان كبير"
-    },
-    {
-        "name":"OB.120.DREAM BOUQUET",
-        "price":24,
-        "category":"عيدان كبير"
-    },
-    {
-        "name":"OB.120.FRUIT FUSION",
-        "price":24,
-        "category":"عيدان كبير"
-    },
-    {
-        "name":"OB.120.GOOD NIGHT KISS",
-        "price":24,
-        "category":"عيدان كبير"
-    },
-    {
-        "name":"OB.120.HIPNOTIZYA",
-        "price":24,
-        "category":"عيدان كبير"
-    },
-    {
-        "name":"OB.120.LIMPIO",
-        "price":24,
-        "category":"عيدان كبير"
-    },
-    {
-        "name":"OB.120.MONA ROSA",
-        "price":24,
-        "category":"عيدان كبير"
-    },
-    {
-        "name":"OB.120.PATCH",
-        "price":24,
-        "category":"عيدان كبير"
-    },
-    {
-        "name":"OB.120.PURE NATURAL",
-        "price":24,
-        "category":"عيدان كبير"
-    },
-    {
-        "name":"OB.120.PURPLE NIGHT",
-        "price":24,
-        "category":"عيدان كبير"
-    },
-    {
-        "name":"OB.120.RAIN FOREST",
-        "price":24,
-        "category":"عيدان كبير"
-    },
-    {
-        "name":"OB.120.STRONG STICK",
-        "price":24,
-        "category":"عيدان كبير"
-    },
-    {
-        "name":"OB.120.TURKISH BATH",
-        "price":24,
-        "category":"عيدان كبير"
-    },
-    {
-        "name":"OB.50.BUBBLE&SANDAL",
-        "price":12,
-        "category":"عيدان صغير"
-    },
-    {
-        "name":"OB.50.CARAMEL",
-        "price":12,
-        "category":"عيدان صغير"
-    },
-    {
-        "name":"OB.50.COCONUT",
-        "price":12,
-        "category":"عيدان صغير"
-    },
-    {
-        "name":"OB.50.EXOTIC OUD",
-        "price":12,
-        "category":"عيدان صغير"
-    },
-    {
-        "name":"OB.50.FRESH BREEZE",
-        "price":12,
-        "category":"عيدان صغير"
-    },
-    {
-        "name":"OB.50.KIWI",
-        "price":12,
-        "category":"عيدان صغير"
-    },
-    {
-        "name":"OB.50.OSMANTHUS",
-        "price":12,
-        "category":"عيدان صغير"
-    },
-    {
-        "name":"OB.50.PURE SHINE",
-        "price":12,
-        "category":"عيدان صغير"
-    },
-    {
-        "name":"OB.50.RED MOON",
-        "price":12,
-        "category":"عيدان صغير"
-    },
-    {
-        "name":"OB.50.ROSE&COFFEE",
-        "price":12,
-        "category":"عيدان صغير"
-    },
-    {
-        "name":"OB.50.VANILLA EFFECT",
-        "price":12,
-        "category":"عيدان صغير"
-    },
-    {
-        "name":"HP.160.BRAVE SELECTION",
-        "price":15,
-        "category":"عطر الشعر"
-    },
-    {
-        "name":"HP.160.EXOTIC FLOWERS",
-        "price":15,
-        "category":"عطر الشعر"
-    },
-    {
-        "name":"HP.160.PASSION FRUIT",
-        "price":15,
-        "category":"عطر الشعر"
-    },
-    {
-        "name":"HP.160.PEERLES DELIGHT",
-        "price":15,
-        "category":"عطر الشعر"
-    },
-    {
-        "name":"HP.160.PRETTY BEAUTY",
-        "price":15,
-        "category":"عطر الشعر"
-    },
-    {
-        "name":"BM.250.CHARM",
-        "price":30,
-        "category":"عطور الجسم"
-    },
-    {
-        "name":"BM.250.COCONUT SHINE",
-        "price":30,
-        "category":"عطور الجسم"
-    },
-    {
-        "name":"BM.250.SEA MIST",
-        "price":30,
-        "category":"عطور الجسم"
-    },
-    {
-        "name":"BM.250.SUN KISS",
-        "price":30,
-        "category":"عطور الجسم"
-    },
-    {
-        "name":"SWEET BEACH",
-        "price":30,
-        "category":"عطور الجسم"
-    },
-    {
-        "name":"DAY DREAM",
-        "price":30,
-        "category":"عطور الجسم"
-    },
-    {
-        "name":"BM.250.MYSTIC SUMMER",
-        "price":30,
-        "category":"عطور الجسم"
-    },
-    {
-        "name":"BM.250.VANILLA SKY ",
-        "price":30,
-        "category":"عطور الجسم"
-    },
-    {
-        "name":"RS.500.DREAM BOUQUET",
-        "price":30,
-        "category":"مرشات كبير"
-    },
-    {
-        "name":"RS.500.HIPNOTIZYA",
-        "price":30,
-        "category":"مرشات كبير"
-    },
-    {
-        "name":"RS.500.MONA ROSA",
-        "price":30,
-        "category":"مرشات كبير"
-    },
-    {
-        "name":"RS.500.PURE NATURAL",
-        "price":30,
-        "category":"مرشات كبير"
-    },
-    {
-        "name":"RS.500.RAIN FOREST",
-        "price":30,
-        "category":"مرشات كبير"
-    },
-    {
-        "name":"RS.500.TURKISH BATH",
-        "price":30,
-        "category":"مرشات كبير"
-    },
-    {
-        "name":"SS.250.AMBER",
-        "price":12,
-        "category":"صابون سائل"
-    },
-    {
-        "name":"SS.250.ICE",
-        "price":12,
-        "category":"صابون سائل"
-    },
-    {
-        "name":"SS.250.JAPANESE CHERRY BLOSSOM",
-        "price":12,
-        "category":"صابون سائل"
-    },
-    {
-        "name":"SS.250.VELVET LAVENDER",
-        "price":12,
-        "category":"صابون سائل"
-    },
-    {
-        "name":"CP.5.BLACK REFIL",
-        "price":17,
-        "category":"جهاز تعبئه العطر "
-    },
-    {
-        "name":"CP.5.SILVER REFIL",
-        "price":17,
-        "category":"جهاز تعبئه العطر "
-    },
-    {
-        "name":"CP.5.RED REFIL",
-        "price":17,
-        "category":"جهاز تعبئه العطر "
-    },
-    {
-        "name":"تستر صغير",
-        "price":5,
-        "category":"أكياس ولاوزم اخرى تساتر الخ"
-    },
-    {
-        "name":"ورق رش ",
-        "price":20,
-        "category":"أكياس ولاوزم اخرى تساتر الخ"
-    },
-    {
-        "name":"كيس صيني صغير",
-        "price":"1,30",
-        "category":"أكياس ولاوزم اخرى تساتر الخ"
-    },
-    {
-        "name":"كيس تركي صغير",
-        "price":1,
-        "category":"أكياس ولاوزم اخرى تساتر الخ"
-    },
-    {
-        "name":"RAIN FORREST",
-        "price":22,
-        "category":"مرشات صغير"
-    },
-    {
-        "name":"MONA ROSA",
-        "price":22,
-        "category":"مرشات صغير"
-    },
-    {
-        "name":"TURKISH BATH",
-        "price":22,
-        "category":"مرشات صغير"
-    },
-    {
-        "name":"DEREAM BOUQET",
-        "price":22,
-        "category":"مرشات صغير"
-    },
-    {
-        "name":"PURE NATURAL",
-        "price":22,
-        "category":"مرشات صغير"
-    },
-    {
-        "name":"HIPONYTZYA",
-        "price":22,
-        "category":"مرشات صغير"
-    }
-];
-        let orderItems = [];
-        const taxRate = 0.18;
-        let editingProduct = null;
+        let products = [];
+        let selectedProducts = [];
 
-        function verifyCode() {
-            const code = document.getElementById("adminCode").value;
-            if (code === adminPassword) {
-                document.getElementById("adminPanel").style.display = "block";
-                alert("تم الدخول بنجاح!");
-                searchDropdown();
-            } else {
-                alert("رمز غير صحيح!");
-            }
-        }
+        $.get('https://docs.google.com/spreadsheets/d/1g3_D2NBwT27O2OI-v1R5tAB2QCfF3_ZCUL9sSLoCv54/gviz/tq?tqx=out:json', function(response) {
+            const jsonData = JSON.parse(response.match(/google\.visualization\.Query\.setResponse\((.*)\)/)[1]);
+            const rows = jsonData.table.rows;
 
-        function searchDropdown() {
-            const searchInput = document.getElementById("searchInput").value.toLowerCase();
-            const productList = document.getElementById("productList");
-            productList.innerHTML = "";
+            rows.forEach(row => {
+                const productName = row.c[0]?.v;
+                const productDescription = row.c[1]?.v || 'بدون وصف';
+                const productPrice = parseFloat(row.c[2]?.v) || 0;
+                const productImage = row.c[3]?.v;
 
-            products.forEach(product => {
-                if (product.name.toLowerCase().includes(searchInput)) {
-                    const div = document.createElement('div');
-                    div.innerHTML = `
-                        <span>${product.name} - ${product.price}₪ (${product.category})</span>
-                        <button onclick='addToOrder("${product.name}", ${product.price})'>إضافة</button>
-                        <button onclick='editProduct("${product.name}")'>تعديل</button>
-                    `;
-                    productList.appendChild(div);
+                if (productName) {
+                    products.push({ name: productName, description: productDescription, price: productPrice, image: productImage });
                 }
             });
-        }
+            displayProducts(products);
+        }).fail(function() {
+            $('#productList').html('<div class="text-red-500 text-center">שגיאה בטעינת המוצרים. אנא נסה שוב מאוחר יותר.</div>');
+        });
 
-        function addToOrder(name, price) {
-            const existingItem = orderItems.find(item => item.name === name);
-            if (existingItem) {
-                existingItem.quantity += 1;
-            } else {
-                orderItems.push({ name: name, price: price, quantity: 1 });
-            }
-            updateOrderTable();
-            searchDropdown();
-        }
-
-        function updateOrderTable() {
-            const tableBody = document.querySelector("#orderTable tbody");
-            tableBody.innerHTML = "";
-
-            orderItems.forEach((item, index) => {
-                const row = tableBody.insertRow();
-                const nameCell = row.insertCell(0);
-                const quantityCell = row.insertCell(1);
-                const priceCell = row.insertCell(2);
-                const deleteCell = row.insertCell(3);
-
-                nameCell.textContent = item.name;
-                quantityCell.innerHTML = `<input type="number" value="${item.quantity}" min="1" onchange="updateQuantity(${index}, this.value)">`;
-                priceCell.textContent = `${item.price * item.quantity}₪`;
-                deleteCell.innerHTML = `<button onclick="deleteOrderItem(${index})">🗑️</button>`;
-            });
-        }
-
-        function updateQuantity(index, quantity) {
-            quantity = parseInt(quantity);
-            if (quantity > 0) {
-                orderItems[index].quantity = quantity;
-            } else {
-                orderItems[index].quantity = 1;
-            }
-            updateOrderTable();
-        }
-
-        function deleteOrderItem(index) {
-            orderItems.splice(index, 1);
-            updateOrderTable();
-        }
-
-        function sendOrder() {
-            if (orderItems.length === 0) {
-                alert("الرجاء إضافة منتجات إلى الطلب!");
-                return;
-            }
-
-            let message = "قائمة الطلبات:\n";
-            let subTotalPrice = 0;
-
-            orderItems.forEach(item => {
-                const itemPrice = (item.price * item.quantity).toFixed(2);
-                message += `- ${item.name}، العدد: ${item.quantity} السعر: ${itemPrice}₪\n`;
-                subTotalPrice += parseFloat(itemPrice);
-            });
-
-            const taxAmount = (subTotalPrice * taxRate).toFixed(2);
-            const finalPrice = (subTotalPrice + parseFloat(taxAmount)).toFixed(2);
-
-            message += `\nالمجموع: ${subTotalPrice.toFixed(2)}₪`;
-            message += `\nالضريبة (18%): ${taxAmount}₪`;
-            message += `\nالسعر الإجمالي: ${finalPrice}₪`;
-
-            const encodedMessage = encodeURIComponent(message);
-          const whatsappUrl = `https://wa.me/972504745306?text=${encodedMessage}`;
-            window.open(whatsappUrl, '_blank');
-        }
-
-        function addProduct() {
-            const newProductName = document.getElementById("newProductName").value;
-            const newProductCategory = document.getElementById("newProductCategory").value;
-            const newProductPrice = parseFloat(document.getElementById("newProductPrice").value);
-
-            if (newProductName && newProductCategory && !isNaN(newProductPrice) && newProductPrice > 0) {
-                if (editingProduct) {
-                    const index = products.findIndex(p => p.name === editingProduct);
-                    if (index !== -1) {
-                        products[index].name = newProductName;
-                        products[index].price = newProductPrice;
-                        products[index].category = newProductCategory;
-                    }
-                    editingProduct = null;
-                    alert("تم تعديل المنتج بنجاح!");
-                } else {
-                    products.push({ name: newProductName, price: newProductPrice, category: newProductCategory });
-                    alert("تم إضافة المنتج بنجاح!");
-                }
-                searchDropdown();
-                document.getElementById("newProductName").value = "";
-                document.getElementById("newProductCategory").value = "";
-                document.getElementById("newProductPrice").value = "";
-            } else {
-                alert("الرجاء إدخال اسم وفئة صحيحة وسعر أكبر من صفر!");
-            }
-        }
-
-        function clearOrder() {
-            orderItems = [];
-            updateOrderTable();
-            alert("تم تفريغ الطلب!");
-        }
-
-        function printOrder() {
-            if (orderItems.length === 0) {
-                alert("الرجاء إضافة منتجات إلى الطلب!");
-                return;
-            }
-
-            let printContent = `
-                <div style="font-family: 'Cairo', sans-serif; text-align: center; padding: 20px;">
-                    <h2 style="color: #00897b; margin-bottom: 10px;">📦 طلب المنتجات</h2>
-                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; margin: auto;">
-                        <thead style="background-color: #c5e1a5;">
-                            <tr>
-                                <th style="border: 1px solid #ddd; padding: 12px; text-align: center; font-size: 18px;">المنتج</th>
-                                <th style="border: 1px solid #ddd; padding: 12px; text-align: center; font-size: 18px;">العدد</th>
-                                <th style="border: 1px solid #ddd; padding: 12px; text-align: center; font-size: 18px;">السعر</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-            `;
-
-            let subTotalPrice = 0;
-            orderItems.forEach(item => {
-                const itemPrice = (item.price * item.quantity).toFixed(2);
-                printContent += `
-                                    <tr>
-                                        <td style="border: 1px solid #ddd; padding: 12px; text-align: center; font-size: 16px;">${item.name}</td>
-                                        <td style="border: 1px solid #ddd; padding: 12px; text-align: center; font-size: 16px;">${item.quantity}</td>
-                                        <td style="border: 1px solid #ddd; padding: 12px; text-align: center; font-size: 16px;">${itemPrice}₪</td>
-                                    </tr>
-                `;
-                subTotalPrice += parseFloat(itemPrice);
-            });
-
-            const taxAmount = (subTotalPrice * taxRate).toFixed(2);
-            const finalPrice = (subTotalPrice + parseFloat(taxAmount)).toFixed(2);
-
-            printContent += `
-                            </tbody>
-                            <tfoot style="background-color: #f0f4c3;">
-                                <tr>
-                                    <td colspan="2" style="border: 1px solid #ddd; padding: 12px; text-align: center; font-size: 18px; font-weight: bold;">المجموع:</td>
-                                    <td style="border: 1px solid #ddd; padding: 12px; text-align: center; font-size: 18px; font-weight: bold;">${subTotalPrice.toFixed(2)}₪</td>
-                                </tr>
-                                <tr>
-                                    <td colspan="2" style="border: 1px solid #ddd; padding: 12px; text-align: center; font-size: 18px; font-weight: bold;">الضريبة (18%):</td>
-                                    <td style="border: 1px solid #ddd; padding: 12px; text-align: center; font-size: 18px; font-weight: bold;">${taxAmount}₪</td>
-                                </tr>
-                                 <tr>
-                                    <td colspan="2" style="border: 1px solid #ddd; padding: 12px; text-align: center; font-size: 18px; font-weight: bold;">السعر الإجمالي:</td>
-                                    <td style="border: 1px solid #ddd; padding: 12px; text-align: center; font-size: 18px; font-weight: bold;">${finalPrice}₪</td>
-                                </tr>
-                            </tfoot>
-                        </table>
-                        <p style="font-size: 16px;">شكراً لطلبكم!</p>
+        function displayProducts(productsToShow) {
+            $('#productList').empty();
+            productsToShow.forEach(product => {
+                const productHtml = `
+                    <div class="product-card" onclick="openModal('${product.name}', ${product.price}, '${product.image}')">
+                        ${product.image ? `<div style="width: 100%; height: 0; padding-bottom: 100%; position: relative; margin-bottom: 0.5rem; border-radius: 0.75rem; overflow: hidden;">
+                            <img src="${product.image}" style="position: absolute; width: 100%; height: 100%; object-fit: cover;">
+                        </div>` : ''}
+                        <div class="product-title">${product.name} - ${product.price.toFixed(2)} שקל</div>
+                        <div class="product-description">${product.description}</div>
                     </div>
                 `;
-
-
-            const printWindow = window.open('', '', 'height=400,width=800');
-            printWindow.document.write('<html><head><title>طباعة الطلب</title>');
-            printWindow.document.write('<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600&display=swap" rel="stylesheet">');
-            printWindow.document.write('<style>');
-            printWindow.document.write('body { font-family: "Cairo", sans-serif; text-align: right; }');
-            printWindow.document.write('table { width: 100%; border-collapse: collapse; margin-bottom: 20px; margin: auto; }');
-            printWindow.document.write('th, td { border: 1px solid #ddd; padding: 12px; text-align: center; }');
-            printWindow.document.write('th { background-color: #c5e1a5; color: #000; }');
-             printWindow.document.write('tfoot { background-color: #f0f4c3; }');
-            printWindow.document.write('</style>');
-            printWindow.document.write('</head><body>');
-            printWindow.document.write(printContent);
-            printWindow.document.write('</body></html>');
-            printWindow.document.close();
-            printWindow.focus();
-            printWindow.print();
-            printWindow.close();
+                $('#productList').append(productHtml);
+            });
         }
 
-        function editProduct(name) {
-            editingProduct = name;
-            const productToEdit = products.find(p => p.name === name);
-            if (productToEdit) {
-                document.getElementById("newProductName").value = productToEdit.name;
-                document.getElementById("newProductCategory").value = productToEdit.category;
-                document.getElementById("newProductPrice").value = productToEdit.price;
-                document.getElementById("adminPanel").style.display = "block";
+        function openModal(name, price, image) {
+            console.log('openModal called');
+            $('#modalContent').html(`
+                ${image ? `<img src="${image}" class="w-full max-h-48 object-contain rounded mb-4">` : ''}
+                <div class="text-lg font-bold mb-2">${name}</div>
+                <div>מחיר: ${price} ILS</div>
+                <div class="mt-3"><input type="number" id="quantityInput" min="1" placeholder="כמות" dir="rtl" class="border rounded-md p-3 w-32 text-lg text-black"></div>
+                <button onclick="addToCart('${name}', ${price}, '${image}')" class="mt-4 bg-green-500 hover:bg-green-600 text-white py-2.5 px-5 rounded-md font-semibold">הוסף לסל</button>
+            `);
+            $('#productModal').show();
+        }
+
+        function addToCart(name, price, image) {
+            const quantity = parseInt($('#quantityInput').val());
+            selectedProducts.push({ name, price, image, quantity });
+            $('#productModal').hide();
+            displayCart();
+            // عرض رسالة التأكيد
+            $('#confirmationMessage').text('התווסף לסל!');
+            $('#confirmationMessage').css('opacity', 1);
+            setTimeout(() => {
+                $('#confirmationMessage').css('opacity', 0);
+            }, 1500);
+        }
+
+        function displayCart() {
+            $('#cartDisplay').empty();
+            let totalPrice = 0;
+            selectedProducts.forEach((product, index) => {
+                const itemPrice = product.price * product.quantity;
+                totalPrice += itemPrice;
+                $('#cartDisplay').append(`
+                    <div class="cart-item">
+                        ${product.image ? `<img src="${product.image}">` : ''}
+                        <div>${product.name} - כמות: ${product.quantity} - מחיר: ${itemPrice.toFixed(2)} שקל</div>
+                    </div>
+                `);
+            });
+
+            if (selectedProducts.length > 0) {
+                $('#cartDisplay').append(`<div class="mt-2 font-bold">סך הכל: ${totalPrice.toFixed(2)} שקל</div>`);
+                $('#cartDisplay').append('<button id="whatsappButton" class="mt-4 bg-green-500 hover:bg-green-600 text-white py-2.5 px-5 rounded-md font-semibold">שלח לוואטסאפ 📲</button>');
+                $('#cartDisplay').append('<button id="downloadPdfButton" class="mt-4 ml-2 bg-red-500 hover:bg-red-600 text-white py-2.5 px-5 rounded-md font-semibold">הורד PDF 📄</button>'); // زر جديد
+
+                $('#whatsappButton').click(function() {
+                    if (selectedProducts.length === 0) {
+                        alert('לא נבחרו מוצרים.');
+                        return;
+                    }
+                    let message = 'רשימת הזמנה:\n';
+                    selectedProducts.forEach(p => {
+                        const productDetails = products.find(prod => prod.name === p.name);
+                        const description = productDetails ? ` - ${productDetails.description}` : '';
+                        message += `- ${p.name}${description} - כמות: ${p.quantity} - מחיר: ${(p.price * p.quantity).toFixed(2)} שקל\n`;
+                    });
+                    const taxRate = 0.18;
+                    const taxAmount = totalPrice * taxRate;
+                    const grandTotal = totalPrice + taxAmount;
+                    message += `\nסך הכל: ${totalPrice.toFixed(2)} שקל`;
+                    message += `\nמע"מ (${(taxRate * 100).toFixed(0)}%): ${taxAmount.toFixed(2)} שקל`;
+                    message += `\nסך הכל כולל מע"מ: ${grandTotal.toFixed(2)} שקל`;
+                    const whatsappURL = `https://wa.me/?text=${encodeURIComponent(message)}`;
+                    window.open(whatsappURL, '_blank');
+                });
+
+                $('#downloadPdfButton').click(function() {
+                    downloadOrderPDF(totalPrice); // استدعاء وظيفة تنزيل PDF
+                });
             }
         }
-        searchDropdown();
+
+        $('#closeModal').click(function() {
+            $('#productModal').hide();
+        });
+
+        // إغلاق النافذة المنبثقة بالنقر خارجها
+        $('#productModal').click(function(event) {
+            if (event.target == this) {
+                $('#productModal').hide();
+            }
+        });
+
+        $('#searchInput').on('input', function() {
+            const searchText = $(this).val().toLowerCase();
+            const filteredProducts = products.filter(product => product.name.toLowerCase().includes(searchText));
+            displayProducts(filteredProducts);
+        });
+
+        function downloadOrderPDF(totalPrice) {
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF();
+            let y = 20;
+            const lineHeight = 10;
+            const margin = 15;
+            const taxRate = 0.18;
+            const taxAmount = totalPrice * taxRate;
+            const grandTotal = totalPrice + taxAmount;
+
+            pdf.setFontSize(16);
+            pdf.text('Order Summary', margin, y);
+            y += 20;
+
+            pdf.setFontSize(12);
+            selectedProducts.forEach(product => {
+                const text = `${product.name} - Quantity: ${product.quantity} - Price: ${(product.price * product.quantity).toFixed(2)} ILS`;
+                pdf.text(text, margin, y);
+                y += lineHeight;
+            });
+
+            y += 10;
+            pdf.setFontSize(14);
+            pdf.text(`Total: ${totalPrice.toFixed(2)} ILS`, margin, y);
+            y += lineHeight;
+            pdf.text(`Tax (${(taxRate * 100).toFixed(0)}%): ${taxAmount.toFixed(2)} ILS`, margin, y);
+            y += lineHeight;
+            pdf.text(`Grand Total: ${grandTotal.toFixed(2)} ILS`, margin, y);
+
+            pdf.save('order_summary.pdf');
+        }
     </script>
 </body>
 </html>
