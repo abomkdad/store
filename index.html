@@ -144,9 +144,10 @@
                 const productDescription = row.c[1]?.v || 'بدون وصف';
                 const productPrice = parseFloat(row.c[2]?.v) || 0;
                 const productImage = row.c[3]?.v;
+                const productCode = row.c[4]?.v; // جلب رمز المنتج من العمود E (index 4)
 
                 if (productName) {
-                    products.push({ name: productName, description: productDescription, price: productPrice, image: productImage });
+                    products.push({ name: productName, description: productDescription, price: productPrice, image: productImage, code: productCode });
                 }
             });
             displayProducts(products);
@@ -184,7 +185,8 @@
 
         function addToCart(name, price, image) {
             const quantity = parseInt($('#quantityInput').val());
-            selectedProducts.push({ name, price, image, quantity });
+            const productDetails = products.find(p => p.name === name);
+            selectedProducts.push({ name, price, image, quantity, code: productDetails ? productDetails.code : '' }); // تخزين رمز المنتج عند الإضافة إلى السلة
             $('#productModal').hide();
             displayCart();
             // عرض رسالة التأكيد
@@ -219,18 +221,25 @@
                         alert('לא נבחרו מוצרים.');
                         return;
                     }
-                    let message = 'רשימת הזמנה:\n';
+                    let message = '';
+                    let totalQuantity = 0;
+                    let totalPriceWithoutTax = 0;
+                    const taxRate = 0.18; // نسبة الضريبة (18%)
+
                     selectedProducts.forEach(p => {
-                        const productDetails = products.find(prod => prod.name === p.name);
-                        const description = productDetails ? ` - ${productDetails.description}` : '';
-                        message += `- ${p.name}${description} - כמות: ${p.quantity} - מחיר: ${(p.price * p.quantity).toFixed(2)} שקל\n`;
+                        message += `المنتج: ${p.name} ${p.code} = العدد: ${p.quantity}\n`;
+                        totalQuantity += parseInt(p.quantity);
+                        totalPriceWithoutTax += p.price * p.quantity;
                     });
-                    const taxRate = 0.18;
-                    const taxAmount = totalPrice * taxRate;
-                    const grandTotal = totalPrice + taxAmount;
-                    message += `\nסך הכל: ${totalPrice.toFixed(2)} שקל`;
-                    message += `\nמע"מ (${(taxRate * 100).toFixed(0)}%): ${taxAmount.toFixed(2)} שקל`;
-                    message += `\nסך הכל כולל מע"מ: ${grandTotal.toFixed(2)} שקל`;
+
+                    const taxAmount = totalPriceWithoutTax * taxRate;
+                    const totalPriceWithTax = totalPriceWithoutTax + taxAmount;
+
+                    message += `\nالعدد الكلي: ${totalQuantity}`;
+                    message += `\nالمجموع بدون الضريبة: ${totalPriceWithoutTax.toFixed(2)} شקל`;
+                    message += `\nالضريبة (${(taxRate * 100).toFixed(0)}%): ${taxAmount.toFixed(2)} شקל`;
+                    message += `\nالمجموع مع الضريبة: ${totalPriceWithTax.toFixed(2)} شקל`;
+
                     const whatsappURL = `https://wa.me/?text=${encodeURIComponent(message)}`;
                     window.open(whatsappURL, '_blank');
                 });
@@ -264,6 +273,9 @@
             let y = 20;
             const lineHeight = 10;
             const margin = 15;
+            const imageSize = 20;
+            const imageMarginRight = 5;
+            const textStartX = margin + imageSize + imageMarginRight;
             const taxRate = 0.18;
             const taxAmount = totalPrice * taxRate;
             const grandTotal = totalPrice + taxAmount;
@@ -273,21 +285,46 @@
             y += 20;
 
             pdf.setFontSize(12);
-            selectedProducts.forEach(product => {
+
+            async function addImageToBase64(product, currentY) {
+                if (product.image) {
+                    try {
+                        const response = await fetch(product.image);
+                        const blob = await response.blob();
+                        const reader = new FileReader();
+                        await new Promise((resolve, reject) => {
+                            reader.onloadend = () => resolve();
+                            reader.onerror = reject;
+                            reader.readAsDataURL(blob);
+                        });
+                        const base64Image = reader.result;
+                        pdf.addImage(base64Image, 'JPEG', margin, currentY - (imageSize / 2), imageSize, imageSize);
+                    } catch (error) {
+                        console.error('Error loading image:', error);
+                    }
+                }
                 const text = `${product.name} - Quantity: ${product.quantity} - Price: ${(product.price * product.quantity).toFixed(2)} ILS`;
-                pdf.text(text, margin, y);
+                pdf.text(text, textStartX, currentY);
+                return currentY + lineHeight;
+            }
+
+            async function processProducts() {
+                for (const product of selectedProducts) {
+                    y = await addImageToBase64(product, y);
+                }
+
+                y += 10;
+                pdf.setFontSize(14);
+                pdf.text(`Total: ${totalPrice.toFixed(2)} ILS`, margin, y);
                 y += lineHeight;
-            });
+                pdf.text(`Tax (${(taxRate * 100).toFixed(0)}%): ${taxAmount.toFixed(2)} ILS`, margin, y);
+                y += lineHeight;
+                pdf.text(`Grand Total: ${grandTotal.toFixed(2)} ILS`, margin, y);
 
-            y += 10;
-            pdf.setFontSize(14);
-            pdf.text(`Total: ${totalPrice.toFixed(2)} ILS`, margin, y);
-            y += lineHeight;
-            pdf.text(`Tax (${(taxRate * 100).toFixed(0)}%): ${taxAmount.toFixed(2)} ILS`, margin, y);
-            y += lineHeight;
-            pdf.text(`Grand Total: ${grandTotal.toFixed(2)} ILS`, margin, y);
+                pdf.save('order_summary.pdf');
+            }
 
-            pdf.save('order_summary.pdf');
+            processProducts();
         }
     </script>
 </body>
