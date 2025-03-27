@@ -62,12 +62,16 @@
             display: flex;
             align-items: center;
             margin-bottom: 1rem;
+            justify-content: space-between; /* Added to space items and delete button */
         }
         .cart-item img {
             width: 50px;
             height: 50px;
             margin-right: 1rem;
             border-radius: 0.5rem;
+        }
+        .cart-item-details {
+            flex-grow: 1; /* Allows details to take up available space */
         }
         .modal {
             display: none; /* Hidden by default */
@@ -111,13 +115,47 @@
             opacity: 0;
             transition: opacity 0.5s ease-in-out;
         }
+        .delete-button {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 0.875rem;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .delete-button:hover {
+            background-color: #d32f2f;
+        }
+        .whatsapp-button {
+            background-color: #25D366;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 0.875rem;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 0.5rem;
+            margin-left: 0.5rem;
+        }
+        .whatsapp-button:hover {
+            background-color: #128C7E;
+        }
         /* إزالة CSS الخاص بالطباعة */
     </style>
 </head>
 <body>
     <div class="container mx-auto p-2">
         <div class="flex justify-between items-center mb-4">
-            <input id="searchInput" type="text" placeholder="ابحث عن المنتج..." class="border p-2 rounded w-full">
+            <input id="searchInput" type="text" placeholder="ابحث عن המוצר..." class="border p-2 rounded w-full">
         </div>
         <div id="productList" class="grid grid-cols-3 gap-2"></div>
         <div id="cartDisplay"></div>
@@ -197,6 +235,11 @@
             }, 1500);
         }
 
+        function removeFromCart(index) {
+            selectedProducts.splice(index, 1);
+            displayCart();
+        }
+
         function displayCart() {
             $('#cartDisplay').empty();
             let totalPrice = 0;
@@ -205,16 +248,19 @@
                 totalPrice += itemPrice;
                 $('#cartDisplay').append(`
                     <div class="cart-item">
-                        ${product.image ? `<img src="${product.image}">` : ''}
-                        <div>${product.name} - כמות: ${product.quantity} - מחיר: ${itemPrice.toFixed(2)} שקל</div>
+                        <div class="flex items-center">
+                            ${product.image ? `<img src="${product.image}">` : ''}
+                            <div class="cart-item-details">${product.name} - כמות: ${product.quantity} - מחיר: ${itemPrice.toFixed(2)} שקל</div>
+                        </div>
+                        <button class="delete-button" onclick="removeFromCart(${index})">حذف</button>
                     </div>
                 `);
             });
 
             if (selectedProducts.length > 0) {
                 $('#cartDisplay').append(`<div class="mt-2 font-bold">סך הכל: ${totalPrice.toFixed(2)} שקל</div>`);
-                $('#cartDisplay').append('<button id="whatsappButton" class="mt-4 bg-green-500 hover:bg-green-600 text-white py-2.5 px-5 rounded-md font-semibold">שלח לוואטסאפ 📲</button>');
-                $('#cartDisplay').append('<button id="downloadPdfButton" class="mt-4 ml-2 bg-red-500 hover:bg-red-600 text-white py-2.5 px-5 rounded-md font-semibold">הורד PDF 📄</button>'); // زر جديد
+                $('#cartDisplay').append('<button id="whatsappButton" class="mt-4 bg-green-500 hover:bg-green-600 text-white py-2.5 px-5 rounded-md font-semibold">שתף בוואטסאפ 📲</button>');
+                $('#cartDisplay').append('<button id="downloadPdfButton" class="mt-4 ml-2 bg-red-500 hover:bg-red-600 text-white py-2.5 px-5 rounded-md font-semibold">Download as PDF 📄</button>');
 
                 $('#whatsappButton').click(function() {
                     if (selectedProducts.length === 0) {
@@ -227,7 +273,7 @@
                     const taxRate = 0.18; // نسبة الضريبة (18%)
 
                     selectedProducts.forEach(p => {
-                        message += `المنتج: ${p.name} ${p.code} = العدد: ${p.quantity}\n`;
+                        message += `מוצר: ${p.name} (${p.code}) = כמות: ${p.quantity}\n`;
                         totalQuantity += parseInt(p.quantity);
                         totalPriceWithoutTax += p.price * p.quantity;
                     });
@@ -235,10 +281,10 @@
                     const taxAmount = totalPriceWithoutTax * taxRate;
                     const totalPriceWithTax = totalPriceWithoutTax + taxAmount;
 
-                    message += `\nالعدد الكلي: ${totalQuantity}`;
-                    message += `\nالمجموع بدون الضريبة: ${totalPriceWithoutTax.toFixed(2)} شקל`;
-                    message += `\nالضريبة (${(taxRate * 100).toFixed(0)}%): ${taxAmount.toFixed(2)} شקל`;
-                    message += `\nالمجموع مع الضريبة: ${totalPriceWithTax.toFixed(2)} شקל`;
+                    message += `\nכמות כוללת: ${totalQuantity}`;
+                    message += `\nסך הכל ללא מע"מ: ${totalPriceWithoutTax.toFixed(2)} שקל`;
+                    message += `\nמע"מ (${(taxRate * 100).toFixed(0)}%): ${taxAmount.toFixed(2)} שקל`;
+                    message += `\nהסך הכולל כולל מע"מ: ${totalPriceWithTax.toFixed(2)} שקל`;
 
                     const whatsappURL = `https://wa.me/?text=${encodeURIComponent(message)}`;
                     window.open(whatsappURL, '_blank');
@@ -270,61 +316,58 @@
         function downloadOrderPDF(totalPrice) {
             const { jsPDF } = window.jspdf;
             const pdf = new jsPDF();
+            const margin = 15;
             let y = 20;
             const lineHeight = 10;
-            const margin = 15;
-            const imageSize = 20;
-            const imageMarginRight = 5;
-            const textStartX = margin + imageSize + imageMarginRight;
+            const columnWidths = [70, 20, 30, 30]; // عرض الأعمدة: اسم المنتج، الكمية، السعر، الإجمالي
+            const columnHeaders = ['Product Name', 'Quantity', 'Price', 'Total'];
             const taxRate = 0.18;
             const taxAmount = totalPrice * taxRate;
             const grandTotal = totalPrice + taxAmount;
 
             pdf.setFontSize(16);
             pdf.text('Order Summary', margin, y);
-            y += 20;
+            y += 15;
 
             pdf.setFontSize(12);
 
-            async function addImageToBase64(product, currentY) {
-                if (product.image) {
-                    try {
-                        const response = await fetch(product.image);
-                        const blob = await response.blob();
-                        const reader = new FileReader();
-                        await new Promise((resolve, reject) => {
-                            reader.onloadend = () => resolve();
-                            reader.onerror = reject;
-                            reader.readAsDataURL(blob);
-                        });
-                        const base64Image = reader.result;
-                        pdf.addImage(base64Image, 'JPEG', margin, currentY - (imageSize / 2), imageSize, imageSize);
-                    } catch (error) {
-                        console.error('Error loading image:', error);
-                    }
-                }
-                const text = `${product.name} - Quantity: ${product.quantity} - Price: ${(product.price * product.quantity).toFixed(2)} ILS`;
-                pdf.text(text, textStartX, currentY);
-                return currentY + lineHeight;
+            // رسم خط فاصل بعد العنوان
+            pdf.line(margin, y, 210 - margin, y);
+            y += 5;
+
+            // كتابة رؤوس الأعمدة
+            let x = margin;
+            for (let i = 0; i < columnHeaders.length; i++) {
+                pdf.text(columnHeaders[i], x, y);
+                x += columnWidths[i];
             }
+            y += 5;
+            pdf.line(margin, y, 210 - margin, y);
+            y += 5;
 
-            async function processProducts() {
-                for (const product of selectedProducts) {
-                    y = await addImageToBase64(product, y);
-                }
-
-                y += 10;
-                pdf.setFontSize(14);
-                pdf.text(`Total: ${totalPrice.toFixed(2)} ILS`, margin, y);
+            // كتابة تفاصيل المنتجات
+            selectedProducts.forEach(product => {
+                let x = margin;
+                pdf.text(`${product.name} (${product.code})`, x, y); // إضافة كود المنتج بجانب الاسم
+                x += columnWidths[0];
+                pdf.text(product.quantity.toString(), x, y);
+                x += columnWidths[1];
+                pdf.text(product.price.toFixed(2), x, y);
+                x += columnWidths[2];
+                pdf.text((product.price * product.quantity).toFixed(2), x, y);
                 y += lineHeight;
-                pdf.text(`Tax (${(taxRate * 100).toFixed(0)}%): ${taxAmount.toFixed(2)} ILS`, margin, y);
-                y += lineHeight;
-                pdf.text(`Grand Total: ${grandTotal.toFixed(2)} ILS`, margin, y);
+                pdf.line(margin, y, 210 - margin, y);
+            });
 
-                pdf.save('order_summary.pdf');
-            }
+            y += 10;
+            pdf.setFontSize(14);
+            pdf.text(`Subtotal: ${totalPrice.toFixed(2)} ILS`, margin, y);
+            y += lineHeight;
+            pdf.text(`Tax (${(taxRate * 100).toFixed(0)}%): ${taxAmount.toFixed(2)} ILS`, margin, y);
+            y += lineHeight;
+            pdf.text(`Grand Total: ${grandTotal.toFixed(2)} ILS`, margin, y);
 
-            processProducts();
+            window.open(pdf.output('bloburl'), '_blank'); // فتح PDF في المتصفح
         }
     </script>
 </body>
