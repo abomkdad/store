@@ -254,16 +254,23 @@
         }
 
         function openModal(name, price, image) {
-            console.log('openModal called');
-            $('#modalContent').html(`
-                ${image ? `<img src="${image}" class="w-full max-h-48 object-contain rounded mb-4">` : ''}
-                <div class="text-lg font-bold mb-2">${name}</div>
-                <div>מחיר: <span class="price">${price}</span> ILS</div>
-                <div class="mt-3"><input type="number" id="quantityInput" min="1" placeholder="כמות" dir="rtl" class="border rounded-md p-3 w-32 text-lg text-black"></div>
-                <button onclick="addToCart('${name}', ${price}, '${image}')" class="mt-4 bg-green-500 hover:bg-green-600 text-white py-2.5 px-5 rounded-md font-semibold">הוסף לסל</button>
-            `);
-            $('#productModal').show();
-        }
+    console.log('openModal called');
+    $('#modalContent').html(`
+        ${image ? `<img src="${image}" class="w-full max-h-48 object-contain rounded mb-4">` : ''}
+        <div class="text-lg font-bold mb-2">${name}</div>
+        <div>מחיר: <span class="price">${price}</span> ILS</div>
+        <div class="mt-3 flex items-center">
+            <input type="number" id="quantityInput" min="1" value="6" placeholder="כמות" dir="rtl" class="border rounded-md p-3 w-24 text-lg text-black">
+            <div class="flex flex-wrap gap-2 ml-2">
+                ${[12, 18, 24, 30, 36, 42, 48].map(qty => `
+                    <button type="button" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded" onclick="$('#quantityInput').val('${qty}')">${qty}</button>
+                `).join('')}
+            </div>
+        </div>
+        <button onclick="addToCart('${name}', ${price}, '${image}')" class="mt-4 bg-green-500 hover:bg-green-600 text-white py-2.5 px-5 rounded-md font-semibold">הוסף לסל</button>
+    `);
+    $('#productModal').show();
+}
 
         function addToCart(name, price, image) {
             const quantity = parseInt($('#quantityInput').val());
