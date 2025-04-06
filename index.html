@@ -216,7 +216,7 @@
                 const productDescription = row.c[1]?.v || 'بدون وصف'; // لا يزال يتم استخدامه للوصف مؤقتًا، يمكنك تعديله إذا لزم الأمر
                 const productPrice = parseFloat(row.c[2]?.v) || 0;
                 const productImage = row.c[3]?.v;
-                const productCode = row.c[4]?.v; // جلب رمز المنتج من العمود E (index 4)
+                const productCode = row.c[1]?.v; // جلب رمز المنتج من العمود E (index 4)
 
                 if (productName) {
                     products.push({ name: productName, category: productCategory, description: productDescription, price: productPrice, image: productImage, code: productCode });
