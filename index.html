@@ -1,439 +1,289 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Product Ordering System</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <style>
-        body { background-color: #1e293b; color: #f3f4f6; } /* خلفية داكنة ولون نص فاتح */
-        .product-card {
-            background-color: #334155;
-            border-radius: 12px;
-            box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1); /* ظل فاتح للتباين */
-            padding: 15px;
-            transition: transform 0.2s;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            color: #f3f4f6; /* لون نص فاتح */
-        }
-        .product-card:hover {
-            transform: scale(1.05);
-        }
-        .product-title {
-            font-size: 1rem;
-            font-weight: 600;
-            margin-top: 0.75rem;
-            margin-bottom: 0.5rem;
-            text-align: center;
-            color: #f3f4f6; /* لون نص فاتح */
-        }
-        /* إضافة هذا النمط لتلوين السعر بالأخضر في قائمة المنتجات */
-        .product-title span.price {
-            color: #4CAF50; /* أخضر فاتح */
-        }
-        .product-description {
-            font-size: 0.875rem;
-            text-align: center;
-            margin-bottom: 0.75rem;
-            color: #9ca3af; /* لون نص ثانوي فاتح */
-            line-height: 1.5;
-        }
-        #productList {
-            height: 70vh;
-            overflow-y: auto;
-            padding: 10px;
-            border: 1px solid #4b5563; /* حدود داكنة */
-            border-radius: 10px;
-            margin-bottom: 60px;
-            background-color: #334155; /* خلفية داكنة */
-            color: #f3f4f6; /* لون نص فاتح */
-        }
-        #cartDisplay {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background-color: #334155; /* خلفية داكنة */
-            padding: 15px;
-            border-top: 3px solid #16a34a; /* لون أخضر فاتح للتمييز */
-            max-height: 250px;
-            overflow-y: auto;
-            color: #f3f4f6; /* لون نص فاتح */
-        }
-        .cart-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 1rem;
-            justify-content: space-between;
-            color: #f3f4f6; /* لون نص فاتح */
-        }
-        .cart-item img {
-            width: 50px;
-            height: 50px;
-            margin-right: 1rem;
-            border-radius: 0.5rem;
-        }
-        .cart-item-details {
-            flex-grow: 1;
-            color: #f3f4f6;
-        }
-        .cart-item-details span.price {
-            color: #4CAF50; /* أخضر فاتح */
-        }
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.7); /* خلفية سوداء مع تعتيم */
-        }
-        .modal-content {
-            background-color: #4b5563; /* خلفية داكنة */
-            margin: 0 auto;
-            top: 0;
-            padding: 20px;
-            border: 1px solid #6b7280; /* حدود داكنة */
-            width: 80%;
-            border-radius: 10px;
-            position: fixed;
-            z-index: 10;
-            color: #f3f4f6; /* لون نص فاتح */
-        }
-        #closeModal {
-            color: #9ca3af; /* لون أيقونة الإغلاق فاتح */
-            font-size: 1.75rem;
-        }
-        #closeModal:hover,
-        #closeModal:focus {
-            color: #f3f4f6; /* لون أيقونة الإغلاق عند التفاعل */
-        }
-        #confirmationMessage {
-            position: fixed;
-            top: 1.5rem;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: #16a34a; /* لون أخضر داكن */
-            color: #f3f4f6; /* لون نص فاتح */
-            padding: 1rem 2rem;
-            border-radius: 0.375rem;
-            opacity: 0;
-            transition: opacity 0.5s ease-in-out;
-        }
-        .delete-button {
-            background-color: #dc2626; /* لون أحمر داكن */
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 0.875rem;
-            border-radius: 0.375rem;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-        .delete-button:hover {
-            background-color: #b91c1c; /* لون أحمر أغمق عند التفاعل */
-        }
-        .whatsapp-button {
-            background-color: #16a34a; /* لون أخضر داكن */
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 0.875rem;
-            border-radius: 0.375rem;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            margin-top: 0.5rem;
-            margin-left: 0.5rem;
-        }
-        .whatsapp-button:hover {
-            background-color: #15803d; /* لون أخضر أغمق عند التفاعل */
-        }
-        #searchInput {
-            border: 1px solid #4b5563;
-            background-color: #334155;
-            color: #f3f4f6;
-        }
-        #searchInput::placeholder {
-            color: #9ca3af;
-        }
-        #categoryFilter {
-            border: 1px solid #4b5563;
-            background-color: #334155;
-            color: #f3f4f6;
-        }
-        /* إضافة هذا النمط لتلوين السعر بالأخضر في النافذة المنبثقة */
-        #modalContent div:nth-child(3) { /* استهداف ثالث div داخل #modalContent */
-            color: #4CAF50; /* أخضر فاتح */
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>صفحة بيع بالجملة</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <style>
+    body {
+      background-color: #111;
+      color: white;
+      font-family: 'Tahoma', sans-serif;
+      padding: 20px;
+      margin-bottom: 200px;
+    }
+    select, .quantity-select, .custom-qty {
+      padding: 8px;
+      margin-bottom: 10px;
+      font-size: 16px;
+    }
+    .custom-qty {
+      width: 60px;
+      margin-right: 5px;
+    }
+    .category {
+      margin-bottom: 40px;
+    }
+    .category h3 {
+      border-bottom: 2px solid #555;
+      padding-bottom: 5px;
+    }
+    .product-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .product {
+      border: 1px solid #333;
+      border-radius: 12px;
+      padding: 15px;
+      background-color: #1a1a1a;
+      text-align: center;
+      cursor: pointer;
+    }
+    .product img {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+    .product h4 {
+      font-size: 50px;
+      margin: 10px 0 5px;
+    }
+    #cart {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background-color: #222;
+      padding: 20px;
+      border-top: 2px solid #444;
+      z-index: 999;
+    }
+    #cart table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    #cart table th, #cart table td {
+      border: 1px solid #444;
+      padding: 8px;
+      text-align: center;
+      font-size: 14px;
+    }
+    .btn {
+      background-color: #28a745;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 10px;
+      font-size: 16px;
+    }
+    .btn:disabled {
+      background-color: #555;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.9);
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+    .modal-content {
+      background: #222;
+      padding: 60px;
+      border-radius: 16px;
+      text-align: center;
+      width: 90%;
+      max-width: 800px;
+      font-size: 1.5em;
+    }
+    .modal-content h3 {
+      font-size: 4em;
+      color: #f4c542;
+      margin-bottom: 30px;
+    }
+    .modal-content select,
+    .modal-content input,
+    .modal-content button {
+      font-size: 1em;
+      padding: 12px;
+      margin: 12px auto;
+    }
+  </style>
 </head>
 <body>
-    <div class="container mx-auto p-2">
-        <div class="flex justify-between items-center mb-4">
-            <input id="searchInput" type="text" placeholder="ابحث عن המוצר..." class="border p-2 rounded w-full">
-        </div>
-        <div class="mb-4">
-            <select id="categoryFilter" class="border p-2 rounded w-full">
-                <option value="">جميع الفئات</option>
-            </select>
-        </div>
-        <div id="productList" class="grid grid-cols-3 gap-2"></div>
-        <div id="cartDisplay"></div>
+  <h2>المنتجات المتاحة بالجملة</h2>
 
-        <div id="productModal" class="modal">
-            <div class="modal-content">
-                <span id="closeModal">&times;</span>
-                <div id="modalContent"></div>
-            </div>
-        </div>
-        <div id="confirmationMessage">התווסף לסל!</div>
+  <label for="categoryFilter">اختر الفئة:</label>
+  <select id="categoryFilter">
+    <option value="all">الكل</option>
+  </select>
+
+  <div id="product-list"></div>
+
+  <div id="cart">
+    <h3>سلة الطلب</h3>
+    <table id="cart-table">
+      <thead>
+        <tr>
+          <th>الكود</th>
+          <th>الفئة</th>
+          <th>السعر</th>
+          <th>الكمية</th>
+          <th>المجموع</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <p><strong>الإجمالي: <span id="total">0</span> ₪</strong></p>
+    <p><strong>الضريبة (17%): <span id="tax">0</span> ₪</strong></p>
+    <p><strong>الإجمالي مع الضريبة: <span id="totalWithTax">0</span> ₪</strong></p>
+    <button class="btn" id="submit-order">إرسال الطلب</button>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal" id="quantityModal">
+    <div class="modal-content">
+      <h3 id="modalTitle">اختيار الكمية</h3>
+      <select id="modalQtySelect">
+        <option value="6">6</option>
+        <option value="12">12</option>
+        <option value="18">18</option>
+        <option value="24">24</option>
+        <option value="30">30</option>
+        <option value="36">36</option>
+        <option value="42">42</option>
+        <option value="48">48</option>
+      </select>
+      <input type="number" id="modalCustomQty" placeholder="أو أدخل كمية مخصصة">
+      <br>
+      <button class="btn" id="modalAddBtn">أضف للطلبية</button>
+      <br>
+      <button class="btn" onclick="$('#quantityModal').hide()">إغلاق</button>
     </div>
+  </div>
 
-    <script>
-        let products = [];
-        let selectedProducts = [];
+  <script>
+    const sheetID = "1g3_D2NBwT27O2OI-v1R5tAB2QCfF3_ZCUL9sSLoCv54";
+    const url = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json`;
 
-        $.get('https://docs.google.com/spreadsheets/d/1g3_D2NBwT27O2OI-v1R5tAB2QCfF3_ZCUL9sSLoCv54/gviz/tq?tqx=out:json', function(response) {
-            const jsonData = JSON.parse(response.match(/google\.visualization\.Query\.setResponse\((.*)\)/)[1]);
-            const rows = jsonData.table.rows;
+    const cart = [];
+    const productsByCategory = {};
+    let selectedProduct = {};
 
-            rows.forEach(row => {
-                const productName = row.c[0]?.v;
-                const productCategory = row.c[1]?.v || 'غير مصنف'; // استخدام العمود B للفئة
-                const productDescription = row.c[1]?.v || 'بدون وصف'; // لا يزال يتم استخدامه للوصف مؤقتًا، يمكنك تعديله إذا لزم الأمر
-                const productPrice = parseFloat(row.c[2]?.v) || 0;
-                const productImage = row.c[3]?.v;
-                const productCode = row.c[1]?.v; // جلب رمز المنتج من العمود E (index 4)
+    function updateCart() {
+      const tbody = $('#cart-table tbody');
+      tbody.empty();
+      let total = 0;
+      cart.forEach(item => {
+        const subtotal = item.price * item.qty;
+        total += subtotal;
+        tbody.append(`
+          <tr>
+            <td>${item.code}</td>
+            <td>${item.category}</td>
+            <td>${item.price}</td>
+            <td>${item.qty}</td>
+            <td>${subtotal}</td>
+          </tr>
+        `);
+      });
+      const tax = Math.round(total * 0.17);
+      const totalWithTax = total + tax;
+      $('#total').text(total);
+      $('#tax').text(tax);
+      $('#totalWithTax').text(totalWithTax);
+    }
 
-                if (productName) {
-                    products.push({ name: productName, category: productCategory, description: productDescription, price: productPrice, image: productImage, code: productCode });
-                }
-            });
-            displayProducts(products);
-            populateCategoryFilter(products); // استدعاء دالة لملء فلتر الفئات
-        }).fail(function() {
-            $('#productList').html('<div class="text-red-500 text-center">שגיאה בטעינת המוצרים. אנא נסה שוב מאוחר יותר.</div>');
-        });
+    function openModal(code, category, price) {
+      selectedProduct = { code, category, price };
+      $('#modalTitle').text(`${code}`);
+      $('#modalQtySelect').val("6");
+      $('#modalCustomQty').val("");
+      $('#quantityModal').fadeIn();
+    }
 
-        function populateCategoryFilter(products) {
-            const categoryFilter = $('#categoryFilter');
-            const uniqueCategories = [...new Set(products.map(product => product.category))];
+    function addSelectedProduct() {
+      const qty = parseInt($('#modalCustomQty').val()) || parseInt($('#modalQtySelect').val());
+      if (qty <= 0) return;
+      const { code, category, price } = selectedProduct;
+      const existing = cart.find(item => item.code === code);
+      if (existing) {
+        existing.qty += qty;
+      } else {
+        cart.push({ code, category, price, qty });
+      }
+      updateCart();
+      $('#quantityModal').fadeOut();
+    }
 
-            uniqueCategories.forEach(category => {
-                categoryFilter.append(`<option value="${category}">${category}</option>`);
-            });
+    $('#modalAddBtn').on('click', addSelectedProduct);
+
+    $.get(url, function(response) {
+      const jsonData = JSON.parse(response.match(/google\.visualization\.Query\.setResponse\((.*)\)/)[1]);
+      const rows = jsonData.table.rows;
+
+      rows.forEach(row => {
+        const code = row.c[0]?.v || "";
+        const category = row.c[1]?.v || "غير محدد";
+        const price = row.c[2]?.v || 0;
+        const img = row.c[3]?.v || "";
+
+        const productHtml = `
+          <div class="product" data-category="${category}" onclick="openModal('${code}', '${category}', ${price})">
+            <img src="${img}" alt="${code}">
+            <h4>${code}</h4>
+            <p>${category}</p>
+            <p><strong>${price} ₪</strong></p>
+          </div>`;
+
+        if (!productsByCategory[category]) {
+          productsByCategory[category] = [];
+          $('#categoryFilter').append(`<option value="${category}">${category}</option>`);
         }
+        productsByCategory[category].push(productHtml);
+      });
 
-        function displayProducts(productsToShow) {
-            $('#productList').empty();
-            productsToShow.forEach(product => {
-                const productHtml = `
-                    <div class="product-card" onclick="openModal('${product.name}', ${product.price}, '${product.image}')">
-                        ${product.image ? `<div style="width: 100%; height: 0; padding-bottom: 100%; position: relative; margin-bottom: 0.5rem; border-radius: 0.75rem; overflow: hidden;">
-                            <img src="${product.image}" style="position: absolute; width: 100%; height: 100%; object-fit: cover;">
-                        </div>` : ''}
-                        <div class="product-title">${product.name} - <span class="price">${product.price.toFixed(2)} שקל</span></div>
-                        <div class="product-description">${product.description}</div>
-                    </div>
-                `;
-                $('#productList').append(productHtml);
-            });
-        }
+      renderProducts();
+    });
 
-        function openModal(name, price, image) {
-    console.log('openModal called');
-    $('#modalContent').html(`
-        ${image ? `<img src="${image}" class="w-full max-h-48 object-contain rounded mb-4">` : ''}
-        <div class="text-lg font-bold mb-2">${name}</div>
-        <div>מחיר: <span class="price">${price}</span> ILS</div>
-        <div class="mt-3 flex items-center">
-            <input type="number" id="quantityInput" min="1" value="6" placeholder="כמות" dir="rtl" class="border rounded-md p-3 w-24 text-lg text-black">
-            <div class="flex flex-wrap gap-2 ml-2">
-                ${[12, 18, 24, 30, 36, 42, 48].map(qty => `
-                    <button type="button" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded" onclick="$('#quantityInput').val('${qty}')">${qty}</button>
-                `).join('')}
-            </div>
-        </div>
-        <button onclick="addToCart('${name}', ${price}, '${image}')" class="mt-4 bg-green-500 hover:bg-green-600 text-white py-2.5 px-5 rounded-md font-semibold">הוסף לסל</button>
-    `);
-    $('#productModal').show();
-}
+    function renderProducts(selected = "all") {
+      $('#product-list').empty();
+      for (const cat in productsByCategory) {
+        if (selected !== "all" && cat !== selected) continue;
+        const section = $(`<div class="category"><h3>${cat}</h3><div class="product-row"></div></div>`);
+        productsByCategory[cat].forEach(p => section.find('.product-row').append(p));
+        $('#product-list').append(section);
+      }
+    }
 
-        function addToCart(name, price, image) {
-            const quantity = parseInt($('#quantityInput').val());
-            const productDetails = products.find(p => p.name === name);
-            selectedProducts.push({ name, price, image, quantity, code: productDetails ? productDetails.code : '' }); // تخزين رمز المنتج عند الإضافة إلى السلة
-            $('#productModal').hide();
-            displayCart();
-            // عرض رسالة التأكيد
-            $('#confirmationMessage').text('התווסף לסל!');
-            $('#confirmationMessage').css('opacity', 1);
-            setTimeout(() => {
-                $('#confirmationMessage').css('opacity', 0);
-            }, 1500);
-        }
+    $('#categoryFilter').on('change', function () {
+      const selected = $(this).val();
+      renderProducts(selected);
+    });
 
-        function removeFromCart(index) {
-            selectedProducts.splice(index, 1);
-            displayCart();
-        }
-
-        function displayCart() {
-            $('#cartDisplay').empty();
-            let totalPrice = 0;
-            selectedProducts.forEach((product, index) => {
-                const itemPrice = product.price * product.quantity;
-                totalPrice += itemPrice;
-                $('#cartDisplay').append(`
-                    <div class="cart-item">
-                        <div class="flex items-center">
-                            ${product.image ? `<img src="${product.image}">` : ''}
-                            <div class="cart-item-details">${product.name} - כמות: ${product.quantity} - מחיר: <span class="price">${itemPrice.toFixed(2)} שקל</span></div>
-                        </div>
-                        <button class="delete-button" onclick="removeFromCart(${index})">حذف</button>
-                    </div>
-                `);
-            });
-
-            if (selectedProducts.length > 0) {
-                $('#cartDisplay').append(`<div class="mt-2 font-bold">סך הכל: ${totalPrice.toFixed(2)} שקל</div>`);
-                $('#cartDisplay').append('<button id="whatsappButton" class="mt-4 bg-green-500 hover:bg-green-600 text-white py-2.5 px-5 rounded-md font-semibold">שתף בוואטסאפ 📲</button>');
-                $('#cartDisplay').append('<button id="downloadPdfButton" class="mt-4 ml-2 bg-red-500 hover:bg-red-600 text-white py-2.5 px-5 rounded-md font-semibold">Download as PDF 📄</button>');
-
-                $('#whatsappButton').click(function() {
-                    if (selectedProducts.length === 0) {
-                        alert('לא נבחרו מוצרים.');
-                        return;
-                    }
-                    let message = '';
-                    let totalQuantity = 0;
-                    let totalPriceWithoutTax = 0;
-                    const taxRate = 0.18; // نسبة الضريبة (18%)
-
-                    selectedProducts.forEach(p => {
-                        message += `מוצר: ${p.name} (${p.code}) = כמות: ${p.quantity}\n`;
-                        totalQuantity += parseInt(p.quantity);
-                        totalPriceWithoutTax += p.price * p.quantity;
-                    });
-
-                    const taxAmount = totalPriceWithoutTax * taxRate;
-                    const totalPriceWithTax = totalPriceWithoutTax + taxAmount;
-
-                    message += `\nכמות כוללת: ${totalQuantity}`;
-                    message += `\nסך הכל ללא מע"מ: ${totalPriceWithoutTax.toFixed(2)} שקל`;
-                    message += `\nמע"מ (${(taxRate * 100).toFixed(0)}%): ${taxAmount.toFixed(2)} שקל`;
-                    message += `\nהסך הכולל כולל מע"מ: ${totalPriceWithTax.toFixed(2)} שקל`;
-
-                    const whatsappURL = `https://wa.me/?text=${encodeURIComponent(message)}`;
-                    window.open(whatsappURL, '_blank');
-                });
-
-                $('#downloadPdfButton').click(function() {
-                    downloadOrderPDF(totalPrice); // استدعاء وظيفة تنزيل PDF
-                });
-            }
-        }
-
-        $('#closeModal').click(function() {
-            $('#productModal').hide();
-        });
-
-        // إغلاق النافذة المنبثقة بالنقر خارجها
-        $('#productModal').click(function(event) {
-            if (event.target == this) {
-                $('#productModal').hide();
-            }
-        });
-
-        $('#searchInput').on('input', function() {
-            const selectedCategory = $('#categoryFilter').val();
-            filterProducts(selectedCategory);
-        });
-
-        $('#categoryFilter').on('change', function() {
-            const selectedCategory = $(this).val();
-            filterProducts(selectedCategory);
-        });
-
-        function filterProducts(category) {
-            const searchText = $('#searchInput').val().toLowerCase();
-            const filteredProducts = products.filter(product => {
-                const categoryMatch = !category || product.category === category;
-                const searchMatch = product.name.toLowerCase().includes(searchText);
-                return categoryMatch && searchMatch;
-            });
-            displayProducts(filteredProducts);
-        }
-
-        function downloadOrderPDF(totalPrice) {
-            const { jsPDF } = window.jspdf;
-            const pdf = new jsPDF();
-            const margin = 15;
-            let y = 20;
-            const lineHeight = 10;
-            const columnWidths = [70, 20, 30, 30]; // عرض الأعمدة: اسم المنتج، الكمية، السعر، الإجمالي
-            const columnHeaders = ['Product Name', 'Quantity', 'Price', 'Total'];
-            const taxRate = 0.18;
-            const taxAmount = totalPrice * taxRate;
-            const grandTotal = totalPrice + taxAmount;
-
-            pdf.setFontSize(16);
-            pdf.text('Order Summary', margin, y);
-            y += 15;
-
-            pdf.setFontSize(12);
-
-            // رسم خط فاصل بعد العنوان
-            pdf.line(margin, y, 210 - margin, y);
-            y += 5;
-
-            // كتابة رؤوس الأعمدة
-            let x = margin;
-            for (let i = 0; i < columnHeaders.length; i++) {
-                pdf.text(columnHeaders[i], x, y);
-                x += columnWidths[i];
-            }
-            y += 5;
-            pdf.line(margin, y, 210 - margin, y);
-            y += 5;
-
-            // كتابة تفاصيل المنتجات
-            selectedProducts.forEach(product => {
-                let x = margin;
-                pdf.text(`${product.name} (${product.code})`, x, y); // إضافة كود المنتج بجانب الاسم
-                x += columnWidths[0];
-                pdf.text(product.quantity.toString(), x, y);
-                x += columnWidths[1];
-                pdf.text(product.price.toFixed(2), x, y);
-                x += columnWidths[2];
-                pdf.text((product.price * product.quantity).toFixed(2), x, y);
-                y += lineHeight;
-                pdf.line(margin, y, 210 - margin, y);
-            });
-
-            y += 10;
-            pdf.setFontSize(14);
-            pdf.text(`Subtotal: ${totalPrice.toFixed(2)} ILS`, margin, y);
-            y += lineHeight;
-            pdf.text(`Tax (${(taxRate * 100).toFixed(0)}%): ${taxAmount.toFixed(2)} ILS`, margin, y);
-            y += lineHeight;
-            pdf.text(`Grand Total: ${grandTotal.toFixed(2)} ILS`, margin, y);
-
-            window.open(pdf.output('bloburl'), '_blank'); // فتح PDF في المتصفح
-        }
-    </script>
+    $('#submit-order').click(function() {
+      let message = "طلب جديد بالجملة:\n";
+      cart.forEach(item => {
+        message += `\n${item.code} | ${item.category} | ${item.qty} × ${item.price} = ${item.qty * item.price} ₪`;
+      });
+      const total = parseInt($('#total').text());
+      const tax = parseInt($('#tax').text());
+      const totalWithTax = parseInt($('#totalWithTax').text());
+      message += `\n\nالإجمالي: ${total} ₪\nالضريبة: ${tax} ₪\nالإجمالي مع الضريبة: ${totalWithTax} ₪`;
+      const phone = "972504745306";
+      const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+      window.open(url, '_blank');
+    });
+  </script>
 </body>
 </html>
