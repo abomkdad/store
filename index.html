@@ -1,288 +1,275 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>صفحة بيع بالجملة</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Ordering System</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <style>
     body {
-      background-color: #111;
-      color: white;
-      font-family: 'Tahoma', sans-serif;
-      padding: 20px;
-      margin-bottom: 200px;
+      background-color: #0f172a;
+      color: #e2e8f0;
     }
-    select, .quantity-select, .custom-qty {
-      padding: 8px;
-      margin-bottom: 10px;
-      font-size: 16px;
-    }
-    .custom-qty {
-      width: 60px;
-      margin-right: 5px;
-    }
-    .category {
-      margin-bottom: 40px;
-    }
-    .category h3 {
-      border-bottom: 2px solid #555;
-      padding-bottom: 5px;
-    }
-    .product-row {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
-    }
-    .product {
-      border: 1px solid #333;
+    .product-card {
+      background-color: #1e293b;
       border-radius: 12px;
+      box-shadow: 0 2px 4px rgba(255, 255, 255, 0.05);
       padding: 15px;
-      background-color: #1a1a1a;
-      text-align: center;
+      transition: transform 0.2s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: #f1f5f9;
       cursor: pointer;
     }
-    .product img {
-      width: 100%;
-      aspect-ratio: 1 / 1;
-      object-fit: cover;
-      border-radius: 8px;
+    .product-card:hover {
+      transform: scale(1.05);
     }
-    .product h4 {
-      font-size: 50px;
-      margin: 10px 0 5px;
+    .product-title {
+      font-size: 1.75rem;
+      font-weight: 800;
+      margin-top: 0.75rem;
+      margin-bottom: 0.5rem;
+      text-align: center;
+      color: #facc15;
     }
-    #cart {
+    .product-description {
+      font-size: 1rem;
+      text-align: center;
+      margin-bottom: 1.75rem;
+      color: #cbd5e1;
+      line-height: 1.75;
+    }
+    #productList {
+      height: 70vh;
+      overflow-y: auto;
+      padding: 10px;
+      border: 1px solid #334155;
+      border-radius: 10px;
+      margin-bottom: 60px;
+      background-color: #1e293b;
+    }
+    #cartDisplay {
       position: fixed;
       bottom: 0;
       left: 0;
       right: 0;
-      background-color: #222;
-      padding: 20px;
-      border-top: 2px solid #444;
-      z-index: 999;
+      background-color: #1e293b;
+      padding: 15px;
+      border-top: 3px solid #22c55e;
+      max-height: 250px;
+      overflow-y: auto;
+      color: #e2e8f0;
     }
-    #cart table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
+    .cart-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
     }
-    #cart table th, #cart table td {
-      border: 1px solid #444;
-      padding: 8px;
-      text-align: center;
-      font-size: 14px;
-    }
-    .btn {
-      background-color: #28a745;
-      color: white;
-      padding: 10px 15px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      margin-top: 10px;
-      font-size: 16px;
-    }
-    .btn:disabled {
-      background-color: #555;
+    .cart-item img {
+      width: 50px;
+      height: 50px;
+      margin-right: 1rem;
+      border-radius: 0.5rem;
     }
     .modal {
       display: none;
       position: fixed;
-      top: 0;
+      z-index: 50;
       left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(0, 0, 0, 0.9);
-      justify-content: center;
-      align-items: center;
-      z-index: 9999;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.6);
     }
     .modal-content {
-      background: #222;
-      padding: 60px;
-      border-radius: 16px;
-      text-align: center;
+      background-color: #1e293b;
+      color: #e2e8f0;
+      margin: 5% auto;
+      padding: 20px;
+      border: 1px solid #475569;
       width: 90%;
-      max-width: 800px;
-      font-size: 1.5em;
+      max-width: 400px;
+      border-radius: 10px;
+      text-align: center;
     }
-    .modal-content h3 {
-      font-size: 4em;
-      color: #f4c542;
-      margin-bottom: 30px;
+    .quantity-btn {
+      background-color: #334155;
+      color: #f1f5f9;
+      padding: 10px 15px;
+      margin: 5px;
+      border-radius: 6px;
+      cursor: pointer;
     }
-    .modal-content select,
-    .modal-content input,
-    .modal-content button {
-      font-size: 1em;
-      padding: 12px;
-      margin: 12px auto;
+    .quantity-btn:hover {
+      background-color: #475569;
+    }
+    .remove-btn {
+      background-color: #ef4444;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 6px;
+      margin-left: 10px;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
-  <h2>المنتجات المتاحة بالجملة</h2>
-
-  <label for="categoryFilter">اختر الفئة:</label>
-  <select id="categoryFilter">
-    <option value="all">الكل</option>
-  </select>
-
-  <div id="product-list"></div>
-
-  <div id="cart">
-    <h3>سلة الطلب</h3>
-    <table id="cart-table">
-      <thead>
-        <tr>
-          <th>الكود</th>
-          <th>الفئة</th>
-          <th>السعر</th>
-          <th>الكمية</th>
-          <th>المجموع</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-    <p><strong>الإجمالي: <span id="total">0</span> ₪</strong></p>
-    <p><strong>الضريبة (18%): <span id="tax">0</span> ₪</strong></p>
-    <p><strong>الإجمالي مع الضريبة: <span id="totalWithTax">0</span> ₪</strong></p>
-    <button class="btn" id="submit-order">إرسال الطلب</button>
+  <div class="container mx-auto p-2">
+    <div class="flex flex-wrap justify-between items-center gap-2 mb-4">
+      <input id="searchInput" type="text" placeholder="ابحث عن المنتج..." class="border p-2 rounded w-full md:w-1/2 bg-yellow-50 text-black font-semibold">
+      <select id="categoryFilter" class="border p-2 rounded w-full md:w-1/3 bg-yellow-100 text-black font-bold">
+        <option value="">كل الفئات</option>
+      </select>
+    </div>
+    <div id="productList" class="grid grid-cols-3 gap-2"></div>
+    <div id="cartDisplay"></div>
   </div>
 
-  <!-- Modal -->
-  <div class="modal" id="quantityModal">
+  <div id="quantityModal" class="modal">
     <div class="modal-content">
-      <h3 id="modalTitle">اختيار الكمية</h3>
-      <select id="modalQtySelect">
-        <option value="6">6</option>
-        <option value="12">12</option>
-        <option value="18">18</option>
-        <option value="24">24</option>
-        <option value="30">30</option>
-        <option value="36">36</option>
-        <option value="42">42</option>
-        <option value="48">48</option>
-      </select>
-      <input type="number" id="modalCustomQty" placeholder="أو أدخل كمية مخصصة">
-      <br>
-      <button class="btn" id="modalAddBtn">أضف للطلبية</button>
-      <br>
-      <button class="btn" onclick="$('#quantityModal').hide()">إغلاق</button>
+      <h2 class="text-xl font-bold mb-4">اختر الكمية</h2>
+      <div class="flex flex-wrap justify-center mb-4">
+        <div class="quantity-btn" onclick="selectQuantity(12)">12</div>
+        <div class="quantity-btn" onclick="selectQuantity(18)">18</div>
+        <div class="quantity-btn" onclick="selectQuantity(24)">24</div>
+        <div class="quantity-btn" onclick="selectQuantity(30)">30</div>
+        <div class="quantity-btn" onclick="selectQuantity(36)">36</div>
+        <div class="quantity-btn" onclick="selectQuantity(42)">42</div>
+        <div class="quantity-btn" onclick="selectQuantity(48)">48</div>
+      </div>
+      <input type="number" id="customQuantity" class="border rounded w-24 p-2 text-center text-black" value="6">
+      <div class="mt-4">
+        <button onclick="confirmQuantity()" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded">تأكيد</button>
+      </div>
     </div>
   </div>
 
   <script>
-    const sheetID = "1g3_D2NBwT27O2OI-v1R5tAB2QCfF3_ZCUL9sSLoCv54";
-    const url = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json`;
+    let products = [];
+    let selectedProduct = null;
+    let selectedProducts = [];
 
-    const cart = [];
-    const productsByCategory = {};
-    let selectedProduct = {};
-
-    function updateCart() {
-      const tbody = $('#cart-table tbody');
-      tbody.empty();
-      let total = 0;
-      cart.forEach(item => {
-        const subtotal = item.price * item.qty;
-        total += subtotal;
-        tbody.append(`
-          <tr>
-            <td>${item.code}</td>
-            <td>${item.category}</td>
-            <td>${item.price}</td>
-            <td>${item.qty}</td>
-            <td>${subtotal}</td>
-          </tr>
-        `);
+    function updateCategoryFilter(categories) {
+      const filter = $('#categoryFilter');
+      filter.empty();
+      filter.append('<option value="">كل الفئات</option>');
+      categories.forEach(cat => {
+        filter.append(`<option value="${cat}">${cat}</option>`);
       });
-      const tax = Math.round(total * 0.18);
-      const totalWithTax = total + tax;
-      $('#total').text(total);
-      $('#tax').text(tax);
-      $('#totalWithTax').text(totalWithTax);
     }
 
-    function openModal(code, category, price) {
-      selectedProduct = { code, category, price };
-      $('#modalTitle').text(`${code}`);
-      $('#modalQtySelect').val("6");
-      $('#modalCustomQty').val("");
+    $.get('https://docs.google.com/spreadsheets/d/1g3_D2NBwT27O2OI-v1R5tAB2QCfF3_ZCUL9sSLoCv54/gviz/tq?tqx=out:json', function (response) {
+      const jsonData = JSON.parse(response.match(/google\.visualization\.Query\.setResponse\((.*)\)/)[1]);
+      const rows = jsonData.table.rows;
+      const categoriesSet = new Set();
+      rows.forEach(row => {
+        const productStock = row.c[8]?.v; // العمود I
+        const productName = row.c[0]?.v;
+        const productCategory = row.c[1]?.v || 'بدون فئة';
+        const productDescription = row.c[1]?.v || 'بدون وصف';
+        const productPrice = parseFloat(row.c[2]?.v) || 0;
+        const productImage = row.c[3]?.v;
+        categoriesSet.add(productCategory);
+        if (productName) {
+        const isAvailable = !productStock || parseInt(productStock) === 0 ? 'غير متوفر' : '';
+        const fullDescription = `${productDescription}${isAvailable ? ' - <span class=\"text-red-400 font-bold\">' + isAvailable + '</span>' : ''}`;
+        const productTitle = isAvailable ? `${productName} - غير متوفر` : productName;
+        products.push({ name: productTitle, description: fullDescription, price: productPrice, image: productImage, category: productCategory });
+        }
+      });
+      updateCategoryFilter(Array.from(categoriesSet));
+      displayProducts(products);
+    });
+
+    function displayProducts(productsToShow) {
+      const selectedCategory = $('#categoryFilter').val();
+      $('#productList').empty();
+      productsToShow.forEach(product => {
+        const desc = product.description || '';
+        if (selectedCategory && product.category !== selectedCategory) return;
+        const productHtml = `
+          <div class="product-card" onclick="openQuantityModal('${product.name}', ${product.price}, '${product.image}')">
+            ${product.image ? `<div style='width:100%;height:0;padding-bottom:100%;position:relative;margin-bottom:0.5rem;border-radius:0.75rem;overflow:hidden;'><img src='${product.image}' style='position:absolute;width:100%;height:100%;object-fit:cover;'></div>` : ''}
+            <div class=\"product-title\" style=\"color: ${product.name.includes('غير متوفر') ? '#ef4444' : '#facc15'}\">${product.name}</div>
+          </div>`;
+        $('#productList').append(productHtml);
+      });
+    }
+
+    function openQuantityModal(name, price, image) {
+      selectedProduct = { name, price, image };
+      $('#customQuantity').val(6);
       $('#quantityModal').fadeIn();
     }
 
-    function addSelectedProduct() {
-      const qty = parseInt($('#modalCustomQty').val()) || parseInt($('#modalQtySelect').val());
-      if (qty <= 0) return;
-      const { code, category, price } = selectedProduct;
-      const existing = cart.find(item => item.code === code);
-      if (existing) {
-        existing.qty += qty;
-      } else {
-        cart.push({ code, category, price, qty });
+    function selectQuantity(qty) {
+      $('#customQuantity').val(qty);
+    }
+
+    function confirmQuantity() {
+      const quantity = parseInt($('#customQuantity').val());
+      if (selectedProduct && quantity > 0) {
+        selectedProduct.quantity = quantity;
+        selectedProducts.push({ ...selectedProduct });
+        displayCart();
+        $('#confirmationMessage').remove();
+        $('body').append(`<div id="confirmationMessage" class="fixed top-6 left-1/2 transform -translate-x-1/2 bg-green-400 text-black px-6 py-3 rounded-lg z-50">✅ تم الإضافة إلى السلة</div>`);
+        setTimeout(() => $('#confirmationMessage').fadeOut(), 1500);
       }
-      updateCart();
       $('#quantityModal').fadeOut();
     }
 
-    $('#modalAddBtn').on('click', addSelectedProduct);
-
-    $.get(url, function(response) {
-      const jsonData = JSON.parse(response.match(/google\.visualization\.Query\.setResponse\((.*)\)/)[1]);
-      const rows = jsonData.table.rows;
-
-      rows.forEach(row => {
-        const code = row.c[0]?.v || "";
-        const category = row.c[1]?.v || "غير محدد";
-        const price = row.c[2]?.v || 0;
-        const img = row.c[3]?.v || "";
-
-        const productHtml = `
-          <div class="product" data-category="${category}" onclick="openModal('${code}', '${category}', ${price})">
-            <img src="${img}" alt="${code}">
-            <h4>${code}</h4>
-            <p>${category}</p>
-            <p><strong>${price} ₪</strong></p>
-          </div>`;
-
-        if (!productsByCategory[category]) {
-          productsByCategory[category] = [];
-          $('#categoryFilter').append(`<option value="${category}">${category}</option>`);
-        }
-        productsByCategory[category].push(productHtml);
-      });
-
-      renderProducts();
-    });
-
-    function renderProducts(selected = "all") {
-      $('#product-list').empty();
-      for (const cat in productsByCategory) {
-        if (selected !== "all" && cat !== selected) continue;
-        const section = $(`<div class="category"><h3>${cat}</h3><div class="product-row"></div></div>`);
-        productsByCategory[cat].forEach(p => section.find('.product-row').append(p));
-        $('#product-list').append(section);
-      }
+    function removeFromCart(index) {
+      selectedProducts.splice(index, 1);
+      displayCart();
     }
 
-    $('#categoryFilter').on('change', function () {
-      const selected = $(this).val();
-      renderProducts(selected);
-    });
-
-    $('#submit-order').click(function() {
-      let message = "طلب جديد بالجملة:\n";
-      cart.forEach(item => {
-        message += `\n${item.code} | ${item.category} | ${item.qty} × ${item.price} = ${item.qty * item.price} ₪`;
+    function displayCart() {
+      $('#cartDisplay').empty();
+      let total = 0;
+      selectedProducts.forEach((item, index) => {
+        total += item.price * item.quantity;
+        $('#cartDisplay').append(`
+          <div class="cart-item">
+            ${item.image ? `<img src='${item.image}' alt=''>` : ''}
+            <div>${item.name} - ₪${item.price.toFixed(2)}</div>
+            <button class="remove-btn" onclick="removeFromCart(${index})">✖</button>
+          </div>`);
       });
-      const total = parseInt($('#total').text());
-      const tax = parseInt($('#tax').text());
-      const totalWithTax = parseInt($('#totalWithTax').text());
-      message += `\n\nالإجمالي: ${total} ₪\nالضريبة: ${tax} ₪\nالإجمالي مع الضريبة: ${totalWithTax} ₪`;
-      const phone = "972504745306";
-      const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+      const tax = total * 0.18;
+      const grandTotal = total + tax;
+      $('#cartDisplay').append(`<div class="mt-2">מע"מ (18%): ₪${tax.toFixed(2)}</div>`);
+      $('#cartDisplay').append(`<div class="mt-2 font-bold">المجموع شامل الضريبة: ₪${grandTotal.toFixed(2)}</div>`);
+      $('#cartDisplay').append(`<button onclick="sendWhatsAppOrder()" class="mt-4 bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded">שלח לוואטסאפ 📲</button>`);
+    }
+
+    function sendWhatsAppOrder() {
+      if (selectedProducts.length === 0) return;
+      let message = 'רשימת הזמנה:\n';
+      let total = 0;
+      selectedProducts.forEach(p => {
+        const product = products.find(prod => prod.name === p.name);
+        const description = product?.description.replace(/<[^>]*>/g, '') || 'ללא תיאור';
+        const subtotal = p.price * p.quantity;
+        total += subtotal;
+        message += `- ${p.name}\nתיאור: ${description}\nכמות: ${p.quantity} - ₪${subtotal.toFixed(2)}\n\n`;
+      });
+      const tax = total * 0.18;
+      const grandTotal = total + tax;
+      message += `סה\"כ לפני מע\"מ: ₪${total.toFixed(2)}\n`;
+      message += `מע\"מ (18%): ₪${tax.toFixed(2)}\n`;
+      message += `סה\"כ כולל מע\"מ: ₪${grandTotal.toFixed(2)}`;
+      const url = `https://wa.me/?text=${encodeURIComponent(message)}`;
       window.open(url, '_blank');
+    }
+
+    $('#searchInput, #categoryFilter').on('input change', function () {
+      const searchText = $('#searchInput').val().toLowerCase();
+      const filteredProducts = products.filter(product => product.name.toLowerCase().includes(searchText));
+      displayProducts(filteredProducts);
     });
   </script>
 </body>
